@@ -1,0 +1,2774 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>flysheep资源避难所-咩咩の摸鱼管理器</title>
+  <!-- 内联 SVG favicon（云图标），与主题切换图标无关 -->
+  <link rel="icon" type="image/svg+xml" sizes="any" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='%233B82F6'%3E%3Ccircle cx='24' cy='34' r='10'/%3E%3Ccircle cx='34' cy='30' r='12'/%3E%3Ccircle cx='44' cy='35' r='9'/%3E%3Crect x='18' y='34' width='32' height='12' rx='6' ry='6'/%3E%3C/g%3E%3C/svg%3E" />
+  <!-- 使用国内CDN资源 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- 配置Tailwind自定义颜色和字体 -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#3B82F6',
+            secondary: '#10B981',
+            light: '#F8FAFC',
+            dragOver: '#93C5FD' // 拖拽悬停颜色
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style>
+    /* 主题切换动画 - 针对特定元素 */
+    body, header, main, footer, [class*="bg-white"], [class*="bg-gray"], [class*="border-gray"] {
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+    
+    .content-auto {
+      content-visibility: auto;
+    }
+    
+    /* 主题切换按钮特效 */
+    #themeToggle {
+      position: relative;
+      overflow: visible;
+    }
+    
+    #themeToggle:active {
+      transform: scale(0.9);
+    }
+    
+    /* 主题切换通知样式 */
+    .theme-notification {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    
+    .folder-hover {
+      transition: all 0.3s ease;
+    }
+    .folder-hover:hover {
+      transform: translateY(-0.25rem);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+    .file-hover {
+      transition: all 0.2s ease;
+    }
+    .file-hover:hover {
+      background-color: rgb(239 246 255);
+    }
+    .dark .file-hover:hover {
+      background-color: rgba(30, 58, 138, 0.2);
+    }
+    .dragging {
+      opacity: 0.5;
+      transform: scale(0.95);
+      border-style: dashed;
+      border-color: rgb(59 130 246);
+    }
+    .drag-over {
+      border-color: rgb(59 130 246);
+      background-color: rgba(59, 130, 246, 0.2);
+    }
+    .dark .drag-over {
+      background-color: rgba(59, 130, 246, 0.3);
+    }
+  </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, system-ui, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width: 640px){.container{max-width:640px}}@media (min-width: 768px){.container{max-width:768px}}@media (min-width: 1024px){.container{max-width:1024px}}@media (min-width: 1280px){.container{max-width:1280px}}@media (min-width: 1536px){.container{max-width:1536px}}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.left-3{left:0.75rem}.top-0{top:0px}.top-1\/2{top:50%}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mx-2{margin-left:0.5rem;margin-right:0.5rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mt-4{margin-top:1rem}.mt-auto{margin-top:auto}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-16{height:4rem}.h-2\.5{height:0.625rem}.h-full{height:100%}.min-h-screen{min-height:100vh}.w-16{width:4rem}.w-full{width:100%}.max-w-md{max-width:28rem}.max-w-\[120px\]{max-width:120px}.flex-1{flex:1 1 0%}.-translate-y-1\/2{--tw-translate-y:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.rounded{border-radius:0.25rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.bg-black\/50{background-color:rgb(0 0 0 / 0.5)}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-green-100{--tw-bg-opacity:1;background-color:rgb(220 252 231 / var(--tw-bg-opacity, 1))}.bg-green-600{--tw-bg-opacity:1;background-color:rgb(22 163 74 / var(--tw-bg-opacity, 1))}.bg-primary{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-purple-600{--tw-bg-opacity:1;background-color:rgb(147 51 234 / var(--tw-bg-opacity, 1))}.bg-red-100{--tw-bg-opacity:1;background-color:rgb(254 226 226 / var(--tw-bg-opacity, 1))}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.bg-secondary{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.p-2{padding:0.5rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-1{padding:0.25rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pl-10{padding-left:2.5rem}.pr-4{padding-right:1rem}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-6xl{font-size:3.75rem;line-height:1}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94 / var(--tw-text-opacity, 1))}.text-primary{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-500{--tw-text-opacity:1;color:rgb(234 179 8 / var(--tw-text-opacity, 1))}.opacity-0{opacity:0}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.folder-hover{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:300ms}.folder-hover:hover{--tw-translate-y:-0.25rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.file-hover{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:200ms}.file-hover:hover{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}@media (prefers-color-scheme: dark){.file-hover:hover{background-color:rgb(30 58 138 / 0.2)}}
+    .hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}
+    .hover\:bg-gray-200:hover{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}
+    .hover\:bg-gray-300:hover{--tw-bg-opacity:1;background-color:rgb(209 213 219 / var(--tw-bg-opacity, 1))}
+    .hover\:bg-green-700:hover{--tw-bg-opacity:1;background-color:rgb(21 128 61 / var(--tw-bg-opacity, 1))}
+    .hover\:bg-primary\/90:hover{background-color:rgb(59 130 246 / 0.9)}
+    .hover\:bg-purple-700:hover{--tw-bg-opacity:1;background-color:rgb(126 34 206 / var(--tw-bg-opacity, 1))}
+    .hover\:bg-red-600:hover{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}
+    .hover\:bg-secondary\/90:hover{background-color:rgb(16 185 129 / 0.9)}
+    .hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}
+    .hover\:text-primary:hover{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}
+    .focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}
+    .focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}
+    .focus\:ring-primary\/50:focus{--tw-ring-color:rgb(59 130 246 / 0.5)}
+    .group:hover .group-hover\:opacity-100{opacity:1}
+    @media (min-width: 640px){.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}}
+    @media (min-width: 768px){.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}}
+    @media (min-width: 1024px){.lg\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}}
+    @media (min-width: 1280px){.xl\:grid-cols-5{grid-template-columns:repeat(5, minmax(0, 1fr))}}
+    @media (prefers-color-scheme: dark){.dark\:inline{display:inline}.dark\:hidden{display:none}.dark\:border-gray-600{--tw-border-opacity:1;border-color:rgb(75 85 99 / var(--tw-border-opacity, 1))}.dark\:border-gray-700{--tw-border-opacity:1;border-color:rgb(55 65 81 / var(--tw-border-opacity, 1))}.dark\:bg-blue-900\/30{background-color:rgb(30 58 138 / 0.3)}.dark\:bg-dark{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.dark\:bg-gray-700{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.dark\:bg-gray-800{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.dark\:bg-gray-900{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.dark\:bg-green-900\/30{background-color:rgb(20 83 45 / 0.3)}.dark\:bg-red-900\/30{background-color:rgb(127 29 29 / 0.3)}.dark\:text-gray-200{--tw-text-opacity:1;color:rgb(229 231 235 / var(--tw-text-opacity, 1))}.dark\:text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.dark\:text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.dark\:hover\:bg-gray-600:hover{--tw-bg-opacity:1;background-color:rgb(75 85 99 / var(--tw-bg-opacity, 1))}.dark\:hover\:bg-gray-700:hover{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.dark\:hover\:bg-gray-800:hover{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.dark\:hover\:text-gray-300:hover{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}}
+  </style><style type="text/css">.qa-sdk-wrapper {
+  position: fixed;
+  width: 400px;
+  right: -600px;
+  max-height: 530px;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.1);
+  transition: all 0.5s ease-in-out;
+  background: #fff;
+}
+
+.qa-sdk-close-btn {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.qa-sdk-close-btn:hover {
+  border-radius: 50%;
+  background-color: #d5d9df;
+}
+
+#qa-sdk-iframe {
+  width: 400px;
+}
+
+@media (min-width: 1024px) and (max-width: 1366px) {
+  .qa-sdk-wrapper{
+    width: 356px;
+  }
+  #qa-sdk-iframe {
+    width: 356px;
+  }
+}
+</style><style id="ai-assist-webType-style">
+    .ai-assist-highlight {
+      background: yellow;
+    }
+    @media print {
+      #ai-assist-root-bangs,
+      #ai-assist-root-bilibili,
+      #ai-assist-root-new {
+        display: none !important;
+      }
+    }
+  </style><style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, system-ui, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width: 640px){.container{max-width:640px}}@media (min-width: 768px){.container{max-width:768px}}@media (min-width: 1024px){.container{max-width:1024px}}@media (min-width: 1280px){.container{max-width:1280px}}@media (min-width: 1536px){.container{max-width:1536px}}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.left-3{left:0.75rem}.top-0{top:0px}.top-1\/2{top:50%}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mt-4{margin-top:1rem}.mt-auto{margin-top:auto}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-16{height:4rem}.h-2\.5{height:0.625rem}.h-full{height:100%}.min-h-screen{min-height:100vh}.w-16{width:4rem}.w-full{width:100%}.max-w-\[120px\]{max-width:120px}.max-w-md{max-width:28rem}.flex-1{flex:1 1 0%}.-translate-y-1\/2{--tw-translate-y:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.bg-black\/50{background-color:rgb(0 0 0 / 0.5)}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-green-100{--tw-bg-opacity:1;background-color:rgb(220 252 231 / var(--tw-bg-opacity, 1))}.bg-green-600{--tw-bg-opacity:1;background-color:rgb(22 163 74 / var(--tw-bg-opacity, 1))}.bg-primary{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-purple-600{--tw-bg-opacity:1;background-color:rgb(147 51 234 / var(--tw-bg-opacity, 1))}.bg-red-100{--tw-bg-opacity:1;background-color:rgb(254 226 226 / var(--tw-bg-opacity, 1))}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.bg-secondary{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.p-1{padding:0.25rem}.p-2{padding:0.5rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pl-10{padding-left:2.5rem}.pr-4{padding-right:1rem}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-6xl{font-size:3.75rem;line-height:1}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94 / var(--tw-text-opacity, 1))}.text-primary{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-500{--tw-text-opacity:1;color:rgb(234 179 8 / var(--tw-text-opacity, 1))}.opacity-0{opacity:0}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.folder-hover{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:300ms}.folder-hover:hover{--tw-translate-y:-0.25rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-200:hover{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-300:hover{--tw-bg-opacity:1;background-color:rgb(209 213 219 / var(--tw-bg-opacity, 1))}.hover\:bg-green-700:hover{--tw-bg-opacity:1;background-color:rgb(21 128 61 / var(--tw-bg-opacity, 1))}.hover\:bg-primary\/90:hover{background-color:rgb(59 130 246 / 0.9)}.hover\:bg-purple-700:hover{--tw-bg-opacity:1;background-color:rgb(126 34 206 / var(--tw-bg-opacity, 1))}.hover\:bg-red-600:hover{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}.hover\:bg-secondary\/90:hover{background-color:rgb(16 185 129 / 0.9)}.hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.hover\:text-primary:hover{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-primary\/50:focus{--tw-ring-color:rgb(59 130 246 / 0.5)}.group:hover .group-hover\:opacity-100{opacity:1}@media (min-width: 640px){.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}}@media (min-width: 768px){.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}}@media (min-width: 1024px){.lg\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}}@media (min-width: 1280px){.xl\:grid-cols-5{grid-template-columns:repeat(5, minmax(0, 1fr))}}@media (prefers-color-scheme: dark){.dark\:inline{display:inline}.dark\:hidden{display:none}.dark\:border-gray-600{--tw-border-opacity:1;border-color:rgb(75 85 99 / var(--tw-border-opacity, 1))}.dark\:border-gray-700{--tw-border-opacity:1;border-color:rgb(55 65 81 / var(--tw-border-opacity, 1))}.dark\:bg-blue-900\/30{background-color:rgb(30 58 138 / 0.3)}.dark\:bg-dark{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.dark\:bg-gray-700{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.dark\:bg-gray-800{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.dark\:bg-gray-900{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.dark\:bg-green-900\/30{background-color:rgb(20 83 45 / 0.3)}.dark\:bg-red-900\/30{background-color:rgb(127 29 29 / 0.3)}.dark\:text-gray-200{--tw-text-opacity:1;color:rgb(229 231 235 / var(--tw-text-opacity, 1))}.dark\:text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.dark\:text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.dark\:hover\:bg-gray-600:hover{--tw-bg-opacity:1;background-color:rgb(75 85 99 / var(--tw-bg-opacity, 1))}.dark\:hover\:bg-gray-700:hover{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.dark\:hover\:bg-gray-800:hover{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.dark\:hover\:text-gray-300:hover{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}}
+  </style><style type="text/css">.qa-sdk-wrapper {
+  position: fixed;
+  width: 400px;
+  right: -600px;
+  max-height: 530px;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.1);
+  transition: all 0.5s ease-in-out;
+  background: #fff;
+}
+
+.qa-sdk-close-btn {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.qa-sdk-close-btn:hover {
+  border-radius: 50%;
+  background-color: #d5d9df;
+}
+
+#qa-sdk-iframe {
+  width: 400px;
+}
+
+@media (min-width: 1024px) and (max-width: 1366px) {
+  .qa-sdk-wrapper{
+    width: 356px;
+  }
+  #qa-sdk-iframe {
+    width: 356px;
+  }
+}
+</style></head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen flex flex-col">
+  <!-- 数据存储区 - 所有数据将保存在这里 -->
+  <div id="dataStorage" style="display: none;">{"id":"root","name":"首页","type":"folder","children":[{"id":"meo6l27tstlfv","name":"咩咩测试","type":"folder","children":[{"id":"meo6m0le58oig","name":"The Rogue Prince of Persia","type":"file","url":"https://pan.quark.cn/s/a956e5c43806"},{"id":"meo6m0lef3mcm","name":"Sword of the Sea","type":"file","url":"https://pan.quark.cn/s/926368c4829d"},{"id":"meo6m0le83o48","name":"Dice Gambit","type":"file","url":"https://pan.quark.cn/s/15cbdf61e401"},{"id":"meo6m0le3lc8p","name":"Chained Together","type":"file","url":"https://pan.quark.cn/s/ad63bf20eabb"},{"id":"meo6m0lem1zlx","name":"Kingdoms and Castles","type":"file","url":"https://pan.quark.cn/s/39b6cc3db8ec"},{"id":"meo6m0lepvhq8","name":"Is This Seat Taken","type":"file","url":"https://pan.quark.cn/s/baca8bcdc6cb"},{"id":"meo6m0le4w0nw","name":"Stoneshard.v0.9.3.5","type":"file","url":"https://pan.quark.cn/s/7b629bcfd5ac"},{"id":"meo6m0leev5p1","name":"Village Tale","type":"file","url":"https://pan.quark.cn/s/8e3868cd1d01"},{"id":"meo6m0leidrso","name":"OVIS LOOP","type":"file","url":"https://pan.quark.cn/s/fc50b2494089"},{"id":"meo6m0le683ix","name":"Warhammer 40000 Dawn of War","type":"file","url":"https://pan.quark.cn/s/61954ba230b1"},{"id":"meo6m0leay4ow","name":"Frosthaven","type":"file","url":"https://pan.quark.cn/s/dc20620b2596"},{"id":"meo6m0leot6or","name":"The RPG","type":"file","url":"https://pan.quark.cn/s/e35d962e59d0"},{"id":"meo6m0lehu61s","name":"Call of Duty Modern Warfare 3","type":"file","url":"https://pan.quark.cn/s/432074312ae1"},{"id":"meo6m0le6z9b2","name":"Dino Topia","type":"file","url":"https://pan.quark.cn/s/4016a95f05a5"},{"id":"meo6m0lewqzih","name":"The Scouring","type":"file","url":"https://pan.quark.cn/s/e46fb857477d"},{"id":"meo6m0ledtltp","name":"Witchfire","type":"file","url":"https://pan.quark.cn/s/5fb7baaaac51"},{"id":"meo6m0lecwrs4","name":"Abyssus","type":"file","url":"https://pan.quark.cn/s/7a56b44ce5d2"},{"id":"meo6m0leil23j","name":"The Elder Scrolls IV Oblivion Remastered","type":"file","url":"https://pan.quark.cn/s/1ecde5ee50d8"},{"id":"meo6m0le1ks25","name":"THE HOUSE OF THE DEAD 2 Remake","type":"file","url":"https://pan.quark.cn/s/e8477dc77747"},{"id":"meo6m0leaj7au","name":"Artis Impact","type":"file","url":"https://pan.quark.cn/s/772e94240df1"},{"id":"meo6m0leu3954","name":"Tiny Bookshop","type":"file","url":"https://pan.quark.cn/s/89b8387356c0"},{"id":"meo6m0lenamt3","name":"Tower of Babel","type":"file","url":"https://pan.quark.cn/s/eafe1a27bac7"},{"id":"meo6m0lezuzn6","name":"Mandragora","type":"file","url":"https://pan.quark.cn/s/f28adc7aeb11"},{"id":"meo6m0lejibgk","name":"Fuel Harvest Together","type":"file","url":"https://pan.quark.cn/s/3bde216f980c"},{"id":"meo6m0lem889p","name":"Fate hollow ataraxia REMASTERED","type":"file","url":"https://pan.quark.cn/s/8215a309aab6"},{"id":"meo6m0led26iq","name":"Gatekeeper","type":"file","url":"https://pan.quark.cn/s/885efd6c567c"},{"id":"meo6m0legzwnz","name":"smzh Black Ops 6","type":"file","url":"https://pan.quark.cn/s/3f0b3752fc62"},{"id":"meo6m0legsgkm","name":"SWAT Commander","type":"file","url":"https://pan.quark.cn/s/dd601f8a8f1e"},{"id":"meo6m0lespmvu","name":"Keep on Mining","type":"file","url":"https://pan.quark.cn/s/c88782424b73"},{"id":"meo6m0lexalxb","name":"Titan Quest II","type":"file","url":"https://pan.quark.cn/s/0377ce606bad"},{"id":"meo6m0lei35n5","name":"Lakeside Bar","type":"file","url":"https://pan.quark.cn/s/c2bb6558aa1b"},{"id":"meo6m0lenirp3","name":"hololive Holos","type":"file","url":"https://pan.quark.cn/s/1a8b779d1b53"},{"id":"meo6m0lebqlu6","name":"Another Farm Roguelike Rebirth","type":"file","url":"https://pan.quark.cn/s/681565bd9395"},{"id":"meo6m0lete7rq","name":"Dragon Ball Z Kakarot v2.2","type":"file","url":"https://pan.quark.cn/s/4f974ea623d1"},{"id":"meo6m0lej18cm","name":"Earthion","type":"file","url":"https://pan.quark.cn/s/ab69a5bd476c"},{"id":"meo6m0leg94hb","name":"NINJA GAIDEN Ragebound","type":"file","url":"https://pan.quark.cn/s/94e2d7ec1a39"},{"id":"meo6m0lejtj7h","name":"Achilles Survivor","type":"file","url":"https://pan.quark.cn/s/961349854019"},{"id":"meo6m0le1xng0","name":"Tales of the Shire","type":"file","url":"https://pan.quark.cn/s/ae672b90cd9f"},{"id":"meo6m0leev41d","name":"Grounded2","type":"file","url":"https://pan.quark.cn/s/3f590bb93b30"},{"id":"meo6m0le1met9","name":"RoboCop Rogue City","type":"file","url":"https://pan.quark.cn/s/d17d3689f80a"},{"id":"meo6m0levqym7","name":"Prison Escape Simulator Dig Out","type":"file","url":"https://pan.quark.cn/s/4652d6b0c0d1"},{"id":"meo6m0le39ajn","name":"UnderMine2","type":"file","url":"https://pan.quark.cn/s/aef97af7ebf1"},{"id":"meo6m0lertda6","name":"NoSleepForKanameDate","type":"file","url":"https://pan.quark.cn/s/63e802fa29c6"},{"id":"meo6m0le21k6a","name":"smzhModernWarfare2019","type":"file","url":"https://pan.quark.cn/s/5b9904624ce6"},{"id":"meo6m0le115l2","name":"Killing Floor 3","type":"file","url":"https://pan.quark.cn/s/f6da7cdceda3"},{"id":"meo6m0lemy270","name":"The Great Villainess Strategy Of Lily","type":"file","url":"https://pan.quark.cn/s/df324298c54f"},{"id":"meo6m0lea5361","name":"Monument Valley 3","type":"file","url":"https://pan.quark.cn/s/8725cdb4dd0f"},{"id":"meo6m0ledxgop","name":"Hell Clock","type":"file","url":"https://pan.quark.cn/s/5543949ffdc8"},{"id":"meo6m0lec6xzi","name":"Forts","type":"file","url":"https://pan.quark.cn/s/b673e044c9bf"},{"id":"meo6m0lelvj6p","name":"Abiotic Factor","type":"file","url":"https://pan.quark.cn/s/55e2236f471e"},{"id":"meo6m0le4f56l","name":"The King is Watching","type":"file","url":"https://pan.quark.cn/s/c6290e2f0a36"},{"id":"meo6m0leh92w1","name":"Mahou Shoujo no Majo Shiken","type":"file","url":"https://pan.quark.cn/s/265f27867b90"},{"id":"meo6m0lek2psl","name":"Whos at the door","type":"file","url":"https://pan.quark.cn/s/1321cf919603"},{"id":"meo6m0le3oskh","name":"Dead Cells v35.8a","type":"file","url":"https://pan.quark.cn/s/3d2a71458cac"},{"id":"meo6m0lejx1f4","name":"Sofia in Exchange for Lies","type":"file","url":"https://pan.quark.cn/s/47ef6a1b6692"},{"id":"meo6m0lejx6xy","name":"Cyberpunk 2077 v.2.3","type":"file","url":"https://pan.quark.cn/s/102c44f93dcf"},{"id":"meo6m0le0enom","name":"Drill Core","type":"file","url":"https://pan.quark.cn/s/4f6947da4bdf"},{"id":"meo6m0le2xwy5","name":"Back to the Dawn","type":"file","url":"https://pan.quark.cn/s/0dd5ad3d22fc"},{"id":"meo6m0les0u27","name":"Eriksholm The Stolen Dream","type":"file","url":"https://pan.quark.cn/s/66021be1007c"},{"id":"meo6m0le3qv83","name":"Rail Route","type":"file","url":"https://pan.quark.cn/s/53245c6dd952"},{"id":"meo6m0les5yjr","name":"Content Warning","type":"file","url":"https://pan.quark.cn/s/88d6229257e9"},{"id":"meo6m0leegq3h","name":"HUNTER HUNTER NEN IMPACT","type":"file","url":"https://pan.quark.cn/s/e4253f2e1cbf"},{"id":"meo6m0lf3wfpf","name":"Diablo 2","type":"file","url":"https://pan.quark.cn/s/74b7f966ab84"},{"id":"meo6m0lfpwh56","name":"DYSMANTLE v1.4.1.2a","type":"file","url":"https://pan.quark.cn/s/d55622df8981"},{"id":"meo6m0lfskzfd","name":"Kunitsu Gami Path of the Goddess","type":"file","url":"https://pan.quark.cn/s/178ca87351f9"},{"id":"meo6m0lfca7mm","name":"Katana ZERO","type":"file","url":"https://pan.quark.cn/s/a052e8d5ab73"},{"id":"meo6m0lfv4yt0","name":"Mycopunk","type":"file","url":"https://pan.quark.cn/s/0f4e56105cdc"},{"id":"meo6m0lftcvhx","name":"Astro.Prospector.v1.0.0.6","type":"file","url":"https://pan.quark.cn/s/94b82f625425"},{"id":"meo6m0lfg2i9i","name":"EDENS ZERO","type":"file","url":"https://pan.quark.cn/s/31078ad13bcd"},{"id":"meo6m0lfafnfv","name":"zwdzjs v3.81","type":"file","url":"https://pan.quark.cn/s/6b3cb162a17c"},{"id":"meo6m0lf37t24","name":"PATAPON 1+2 REPLAY","type":"file","url":"https://pan.quark.cn/s/7c5b2763926a"},{"id":"meo6m0lfeis77","name":"Tony Hawks Pro Skater 3 4","type":"file","url":"https://pan.quark.cn/s/7f9d8c0bfc6b"},{"id":"meo6m0lfqdpgr","name":"Cauldron","type":"file","url":"https://pan.quark.cn/s/44165c5f8ec4"},{"id":"meo6m0lfdaatu","name":"Heretical","type":"file","url":"https://pan.quark.cn/s/23cf177d6e39"},{"id":"meo6m0lfgcn65","name":"Circle Empires","type":"file","url":"https://pan.quark.cn/s/fa184a7fbdf5"},{"id":"meo6m0lfhm9oz","name":"Stellaris","type":"file","url":"https://pan.quark.cn/s/9b9d9521a13c"},{"id":"meo6m0lfwaoji","name":"WARRIORS Abyss","type":"file","url":"https://pan.quark.cn/s/5ccb95dbcacd"},{"id":"meo6m0lfqf62d","name":"DayZ","type":"file","url":"https://pan.quark.cn/s/dbc9014ea5fd"},{"id":"meo6m0lfy5jes","name":"Sky Force Reloaded","type":"file","url":"https://pan.quark.cn/s/82591ed94439"},{"id":"meo6m0lf2o8p5","name":"Date Everything","type":"file","url":"https://pan.quark.cn/s/16a2695e57bb"},{"id":"meo6m0lf5e2qn","name":"inZOI","type":"file","url":"https://pan.quark.cn/s/e0bf427f8882"},{"id":"meo6m0lfgfsf3","name":"Click and Conquer","type":"file","url":"https://pan.quark.cn/s/5c591baf14ff"},{"id":"meo6m0lfe51fi","name":"Motor Town Behind The Wheel","type":"file","url":"https://pan.quark.cn/s/1a9fa3d7170e"},{"id":"meo6m0lfiyt1e","name":"Lunar Eclipse","type":"file","url":"https://pan.quark.cn/s/cb7b877b9b9b"},{"id":"meo6m0lfg84dx","name":"Tinkerlands","type":"file","url":"https://pan.quark.cn/s/ff3f7ff9808f"},{"id":"meo6m0lfmur94","name":"Europa Universalis IV v1.375","type":"file","url":"https://pan.quark.cn/s/f02c704ee739"},{"id":"meo6m0lfnr9mv","name":"Diablo1","type":"file","url":"https://pan.quark.cn/s/472e6e12882b"},{"id":"meo6m0lfoanct","name":"NOBUNAGAS AMBITION Awakening Power Up Kit","type":"file","url":"https://pan.quark.cn/s/0b0851eeade0"},{"id":"meo6m0lfnsr9v","name":"Suit4Hire","type":"file","url":"https://pan.quark.cn/s/997ddcf642e1"},{"id":"meo6m0lfs9men","name":"Super Luckys Tale","type":"file","url":"https://pan.quark.cn/s/cd8983d1d435"},{"id":"meo6m0lfev7gx","name":"Rift of the NecroDancer","type":"file","url":"https://pan.quark.cn/s/336a394326df"},{"id":"meo6m0lf3auro","name":"Dolls Nest","type":"file","url":"https://pan.quark.cn/s/2fad9599a377"},{"id":"meo6m0lfw71qj","name":"PEAK","type":"file","url":"https://pan.quark.cn/s/dc26ef5cd892"},{"id":"meo6m0lf05qvl","name":"请别影响我成仙","type":"file","url":"https://pan.quark.cn/s/64e4c8f2c05d"},{"id":"meo6m0lf3sxd5","name":"Rhythm Doctor","type":"file","url":"https://pan.quark.cn/s/7ebc4e2ee38b"},{"id":"meo6m0lfxme2g","name":"Victoria3","type":"file","url":"https://pan.quark.cn/s/d6f7d18db0ed"},{"id":"meo6m0lf3bwjh","name":"Crime Simulator","type":"file","url":"https://pan.quark.cn/s/b37d55a42598"},{"id":"meo6m0lfc2pls","name":"ToHeart","type":"file","url":"https://pan.quark.cn/s/dd2b5fd539c5"},{"id":"meo6m0lf2svjp","name":"Palworld v0.6.07","type":"file","url":"https://pan.quark.cn/s/259dcfc8ffd3"},{"id":"meo6m0lfjjsdw","name":"Crashlands 2","type":"file","url":"https://pan.quark.cn/s/9847b6f33844"}]},{"id":"meo71j17s94n1","name":"v0.1版 稍微能用","type":"folder","children":[]}],"darkMode":true}</div>
+
+  <!-- 顶部导航栏 -->
+  <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <i class="fa fa-cloud text-primary text-2xl"></i>
+        <h1 class="text-xl font-bold">flysheep资源避难所-咩咩の摸鱼管理器</h1>
+      </div>
+      
+      <div class="flex items-center space-x-4">
+        <button id="importBtn" class="flex items-center space-x-1 bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-lg transition-colors text-sm">
+          <i class="fa fa-upload"></i>
+          <span>导入</span>
+        </button>
+        <input type="file" id="fileInput" accept=".csv" style="display: none;">
+        <button id="exportBtn" class="flex items-center space-x-1 bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg transition-colors text-sm">
+          <i class="fa fa-download"></i>
+          <span>导出</span>
+        </button>
+        <button id="themeToggle" class="relative p-2 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition-all duration-300 transform hover:scale-110 active:scale-95 group border border-gray-300 dark:border-gray-600">
+          <div class="relative z-20 w-6 h-6 flex items-center justify-center">
+            <span aria-hidden="true" class="relative z-10 dark:hidden transition-all duration-300 transform group-hover:rotate-12 text-yellow-500 hover:text-yellow-400 text-[18px] leading-none select-none">&#x2600;&#xFE0E;</span>
+            <span aria-hidden="true" class="hidden dark:inline transition-all duration-300 transform group-hover:rotate-12 text-yellow-300 hover:text-yellow-200 text-[18px] leading-none select-none">&#x263E;&#xFE0E;</span>
+          </div>
+          <span class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
+            <span class="dark:hidden">切换到深色模式</span>
+            <span class="hidden dark:inline">切换到浅色模式</span>
+          </span>
+        </button>
+        <a href="https://flysheep6.cn/" target="_blank" id="homeBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+          <i class="fa fa-home"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 路径导航 -->
+  <div id="pathNavigation" class="bg-gray-100 dark:bg-gray-800 py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm"><span class="cursor-pointer hover:text-primary text-primary font-medium" data-id="root">首页</span></div>
+
+  <!-- 主内容区 -->
+  <main class="flex-1 container mx-auto px-4 py-6">
+    <!-- 操作按钮区 -->
+    <div class="mb-6 flex flex-wrap gap-3">
+      <button id="addFolderBtn" class="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors">
+        <i class="fa fa-folder"></i>
+        <span>添加文件夹=ᗜωᗜ= </span>
+      </button>
+      <button id="addFileBtn" class="flex items-center space-x-2 bg-secondary hover:bg-secondary/90 text-white px-4 py-2 rounded-lg transition-colors">
+        <i class="fa fa-file"></i>
+        <span>添加文件</span>
+      </button>
+      <button id="githubSyncBtn" class="flex items-center space-x-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
+        <i class="fa fa-github"></i>
+        <span>GitHub同步</span>
+      </button>
+      <button id="refreshBtn" class="flex items-center space-x-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors">
+        <i class="fa fa-refresh"></i>
+        <span>刷新</span>
+      </button>
+    </div>
+
+    <!-- 搜索框 -->
+    <div class="mb-6">
+      <div class="relative">
+        <input type="text" id="searchInput" placeholder="搜索文件夹或链接..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/50">
+        <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+      </div>
+    </div>
+
+    <!-- GitHub同步状态 -->
+    <div id="githubSyncStatusContainer" class="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700" style="display: none;">
+      <div class="flex items-center justify-between">
+        <div class="flex-1">
+          <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">GitHub同步状态</h4>
+          <p id="githubSyncStatus" class="text-xs text-gray-600 dark:text-gray-400">未同步</p>
+        </div>
+        <div class="flex space-x-2">
+          <button id="manualSyncBtn" class="flex items-center space-x-1 px-3 py-1 text-xs bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors">
+            <i class="fa fa-refresh"></i>
+            <span>立即同步</span>
+          </button>
+          <button id="manageSyncBtn" class="flex items-center space-x-1 px-3 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded transition-colors">
+            <i class="fa fa-cog"></i>
+            <span>管理</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 内容展示区 -->
+    <div id="contentContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"><div data-id="meo6l27tstlfv" data-type="folder" class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700 folder-hover cursor-pointer flex flex-col h-full group">
+            <div class="flex justify-between items-start mb-2">
+              <div class="flex items-center space-x-2">
+                <i class="fa fa-folder text-yellow-500 text-xl"></i>
+                <span class="font-medium truncate max-w-[120px]">咩咩测试</span>
+              </div>
+              <div class="item-actions opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="edit-btn p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded" data-id="meo6l27tstlfv" data-type="folder">
+                  <i class="fa fa-pencil text-gray-500"></i>
+                </button>
+                <button class="delete-btn p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded" data-id="meo6l27tstlfv" data-type="folder">
+                  <i class="fa fa-trash text-red-500"></i>
+                </button>
+              </div>
+            </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-auto">100 个项目</p>
+          </div><div data-id="meo71j17s94n1" data-type="folder" class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700 folder-hover cursor-pointer flex flex-col h-full group">
+            <div class="flex justify-between items-start mb-2">
+              <div class="flex items-center space-x-2">
+                <i class="fa fa-folder text-yellow-500 text-xl"></i>
+                <span class="font-medium truncate max-w-[120px]">v0.1版 稍微能用</span>
+              </div>
+              <div class="item-actions opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="edit-btn p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded" data-id="meo71j17s94n1" data-type="folder">
+                  <i class="fa fa-pencil text-gray-500"></i>
+                </button>
+                <button class="delete-btn p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded" data-id="meo71j17s94n1" data-type="folder">
+                  <i class="fa fa-trash text-red-500"></i>
+                </button>
+              </div>
+            </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-auto">0 个项目</p>
+          </div></div>
+
+    <!-- 空状态提示 -->
+    <div id="emptyState" class="flex flex-col items-center justify-center py-16 text-center hidden">
+      <i class="fa fa-folder-open text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+      <h3 class="text-xl font-medium mb-2">当前目录为空</h3>
+      <p class="text-gray-500 dark:text-gray-400 mb-6">点击"新建文件夹"或"添加链接"开始填充内容</p>
+    </div>
+  </main>
+
+  <!-- 导入进度模态框 -->
+  <div id="importProgressModal" class="modal fixed inset-0 bg-black/50 z-50 items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 transform transition-all">
+      <div class="text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-500 mb-4">
+          <i class="fa fa-spinner fa-spin text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">正在导入...</h3>
+        <p id="importProgressText" class="text-gray-500 dark:text-gray-400">正在处理: 101/101</p>
+        <div class="mt-4 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+          <div id="importProgressBar" class="bg-primary h-2.5 rounded-full" style="width: 100%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 导入结果模态框 -->
+  <div id="importResultModal" class="modal fixed inset-0 bg-black/50 z-50 items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 transform transition-all">
+      <div class="text-center">
+        <div id="importResultIcon" class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 text-green-500 mb-4">
+          <i class="fa fa-check text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">导入完成</h3>
+        <p id="importResultText" class="text-gray-500 dark:text-gray-400 mb-6">成功导入 101 个新文件，更新 0 个现有文件</p>
+        <div class="flex justify-center">
+          <button class="modal-close px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+            确定
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 页脚 -->
+  <footer class="bg-white dark:bg-gray-800 py-4 border-t border-gray-200 dark:border-gray-700">
+    <div class="container mx-auto px-4 text-center text-sm text-gray-500 dark:text-gray-400">
+      <p>咩咩的摸鱼管理器 © 2025</p>
+    </div>
+  </footer>
+
+  <!-- 新建文件夹模态框 -->
+  <div id="folderModal" class="modal fixed inset-0 bg-black/50 z-50 items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 transform transition-all">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold">新建文件夹</h3>
+        <button class="modal-close text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      <form id="folderForm">
+        <div class="mb-4">
+          <label for="folderName" class="block mb-2 text-sm font-medium">文件夹名称</label>
+          <input type="text" id="folderName" required="" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/50">
+        </div>
+        <div class="flex justify-end space-x-3">
+          <button type="button" class="modal-close px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            取消
+          </button>
+          <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+            创建
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 添加链接模态框 -->
+  <div id="fileModal" class="modal fixed inset-0 bg-black/50 z-50 items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 transform transition-all">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold">添加链接</h3>
+        <button class="modal-close text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      <form id="fileForm">
+        <div class="mb-4">
+          <label for="fileName" class="block mb-2 text-sm font-medium">链接名称</label>
+          <input type="text" id="fileName" required="" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/50">
+        </div>
+        <div class="mb-4">
+          <label for="fileUrl" class="block mb-2 text-sm font-medium">链接地址</label>
+          <input type="url" id="fileUrl" required="" placeholder="https://example.com" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/50">
+        </div>
+        <div class="flex justify-end space-x-3">
+          <button type="button" class="modal-close px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            取消
+          </button>
+          <button type="submit" class="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors">
+            添加
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 编辑模态框 -->
+  <div id="editModal" class="modal fixed inset-0 bg-black/50 z-50 items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 transform transition-all">
+      <div class="flex justify-between items-center mb-4">
+        <h3 id="editModalTitle" class="text-xl font-bold">编辑链接</h3>
+        <button class="modal-close text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      <form id="editForm">
+        <input type="hidden" id="editItemId" value="meo6m0lf05qvl">
+        <input type="hidden" id="editItemType" value="file">
+        
+        <div class="mb-4">
+          <label for="editName" class="block mb-2 text-sm font-medium">名称</label>
+          <input type="text" id="editName" required="" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/50">
+        </div>
+        
+        <div id="editUrlContainer" class="mb-4">
+          <label for="editUrl" class="block mb-2 text-sm font-medium">链接地址</label>
+          <input type="url" id="editUrl" placeholder="https://example.com" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/50">
+        </div>
+        
+        <div class="flex justify-end space-x-3">
+          <button type="button" class="modal-close px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            取消
+          </button>
+          <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+            保存
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 删除确认模态框 -->
+  <div id="deleteModal" class="modal fixed inset-0 bg-black/50 z-50 items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 transform transition-all">
+      <div class="text-center mb-6">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 text-red-500 mb-4">
+          <i class="fa fa-trash text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">确认删除？</h3>
+        <p id="deleteMessage" class="text-gray-500 dark:text-gray-400">此文件夹及其包含的所有内容都将被删除，且无法恢复。</p>
+      </div>
+      <div class="flex justify-center space-x-3">
+        <button type="button" class="modal-close px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+          取消
+        </button>
+        <button id="confirmDeleteBtn" class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+          删除
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GitHub同步管理模态框 -->
+  <div id="githubSyncModal" class="modal fixed inset-0 bg-black/50 z-50 items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-2xl p-6 transform transition-all max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold">GitHub仓库同步管理</h3>
+        <button class="modal-close text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      
+      <!-- 添加新仓库 -->
+      <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+        <h4 class="text-lg font-medium mb-4">添加新仓库</h4>
+        <form id="addRepoForm">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label for="repoUrl" class="block mb-2 text-sm font-medium">GitHub仓库URL</label>
+              <input type="url" id="repoUrl" required placeholder="https://github.com/owner/repo" 
+                     class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/50">
+            </div>
+            <div>
+              <label for="repoFolderName" class="block mb-2 text-sm font-medium">文件夹名称</label>
+              <input type="text" id="repoFolderName" placeholder="自动生成" 
+                     class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/50">
+            </div>
+          </div>
+          
+          <!-- 高级选项 -->
+          <div class="mb-4">
+            <button type="button" id="toggleAdvancedOptions" class="text-sm text-blue-500 hover:text-blue-600">
+              <i class="fa fa-chevron-down"></i> 高级选项
+            </button>
+            <div id="advancedOptions" class="mt-3 space-y-3 hidden">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label for="repoBranch" class="block mb-1 text-sm font-medium">分支</label>
+                  <input type="text" id="repoBranch" value="main" 
+                         class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/50">
+                </div>
+                <div>
+                  <label for="fileExtensions" class="block mb-1 text-sm font-medium">文件扩展名过滤</label>
+                  <input type="text" id="fileExtensions" placeholder="如: md,txt,pdf" 
+                         class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/50">
+                </div>
+              </div>
+              <div>
+                <label for="pathPattern" class="block mb-1 text-sm font-medium">路径模式过滤</label>
+                <input type="text" id="pathPattern" placeholder="如: docs/.*\.md$ (正则表达式)" 
+                       class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/50">
+              </div>
+              <div class="flex items-center space-x-4">
+                <label class="flex items-center">
+                  <input type="checkbox" id="clearBeforeSync" class="mr-2">
+                  <span class="text-sm">同步前清空文件夹</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex justify-end space-x-3">
+            <button type="button" id="testRepoBtn" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+              <i class="fa fa-flask"></i> 测试连接
+            </button>
+            <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+              <i class="fa fa-plus"></i> 添加仓库
+            </button>
+          </div>
+        </form>
+      </div>
+      
+      <!-- 已配置的仓库列表 -->
+      <div>
+        <h4 class="text-lg font-medium mb-4">已配置的仓库</h4>
+        <div id="repoList" class="space-y-3">
+          <!-- 仓库项目将在这里动态生成 -->
+        </div>
+        <div id="emptyRepoList" class="text-center py-8 text-gray-500 dark:text-gray-400">
+          <i class="fa fa-github text-4xl mb-2"></i>
+          <p>还没有配置任何仓库</p>
+        </div>
+      </div>
+      
+      <!-- 全局设置 -->
+      <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <h4 class="text-lg font-medium mb-4">全局设置</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="syncInterval" class="block mb-2 text-sm font-medium">自动同步间隔（分钟）</label>
+            <input type="number" id="syncInterval" value="30" min="5" max="1440" 
+                   class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/50">
+          </div>
+          <div>
+            <label for="githubToken" class="block mb-2 text-sm font-medium">GitHub访问令牌（可选）</label>
+            <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx" 
+                   class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/50">
+          </div>
+        </div>
+        <div class="mt-4 flex justify-end space-x-3">
+          <button id="saveGlobalSettings" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+            <i class="fa fa-save"></i> 保存设置
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GitHub同步进度模态框 -->
+  <div id="githubSyncProgressModal" class="modal fixed inset-0 bg-black/50 z-50 items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 transform transition-all">
+      <div class="text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 text-red-500 mb-4">
+          <i class="fa fa-github fa-spin text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">正在同步GitHub仓库...</h3>
+        <p id="syncProgressText" class="text-gray-500 dark:text-gray-400 mb-4">正在获取仓库信息...</p>
+        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-4">
+          <div id="syncProgressBar" class="bg-red-500 h-2.5 rounded-full transition-all" style="width: 0%;"></div>
+        </div>
+        <div id="syncProgressDetails" class="text-xs text-gray-400 space-y-1">
+          <!-- 详细进度信息 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 数据结构和变量
+    let fileSystem = null;
+    let currentFolder = null;
+    let deleteItem = null;
+    let draggedItem = null;
+    
+    // 初始化
+    function init() {
+      // 从页面内的存储区加载数据
+      loadDataFromHtml();
+      
+      // 检查深色模式偏好
+      checkDarkMode();
+      
+      renderContent();
+      setupEventListeners();
+    }
+    
+    // 从HTML存储区加载数据
+    function loadDataFromHtml() {
+      try {
+        const storageElement = document.getElementById('dataStorage');
+        const data = JSON.parse(storageElement.textContent.trim());
+        
+        // 确保数据结构完整
+        if (data && data.id === 'root' && data.type === 'folder') {
+          fileSystem = data;
+        } else {
+          // 数据结构不正确，使用默认数据
+          fileSystem = {
+            id: 'root',
+            name: '首页',
+            type: 'folder',
+            children: [],
+            darkMode: false
+          };
+        }
+        
+        currentFolder = fileSystem;
+      } catch (e) {
+        console.error('加载数据失败，使用默认数据', e);
+        fileSystem = {
+          id: 'root',
+          name: '首页',
+          type: 'folder',
+          children: [],
+          darkMode: false
+        };
+        currentFolder = fileSystem;
+      }
+    }
+    
+    // 保存数据到HTML存储区
+    function saveDataToHtml() {
+      try {
+        const storageElement = document.getElementById('dataStorage');
+        // 使用textContent而非value，确保数据被正确存储
+        storageElement.textContent = JSON.stringify(fileSystem);
+      } catch (e) {
+        console.error('保存数据失败:', e);
+        alert('保存失败，请尝试导出当前文件备份');
+      }
+    }
+    
+    // 导出HTML文件
+    function exportHtmlFile() {
+      // 1. 确保最新数据已保存
+      saveDataToHtml();
+      
+      // 2. 创建完整的HTML内容字符串
+      let htmlContent = '<!DOCTYPE html>\n';
+      htmlContent += document.documentElement.outerHTML;
+      
+      // 3. 确保数据存储区包含最新数据
+      const dataStorage = document.getElementById('dataStorage');
+      const dataRegex = /<div id="dataStorage"[^>]*>[\s\S]*?<\/div>/i;
+      const newDataStorage = `<div id="dataStorage" style="display: none;">${dataStorage.textContent}</div>`;
+      htmlContent = htmlContent.replace(dataRegex, newDataStorage);
+      
+      // 4. 创建Blob并触发下载
+      const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '文件链接管理系统_' + new Date().toLocaleDateString().replace(/\//g, '-') + '.html';
+      document.body.appendChild(a);
+      
+      // 5. 强制触发下载
+      a.click();
+      
+      // 6. 清理
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        alert('导出成功！您可以关闭当前页面，下次直接打开导出的HTML文件继续使用。');
+      }, 100);
+    }
+    
+    // 导入CSV文件
+    function importCsvFile(file) {
+      // 显示进度模态框
+      const progressModal = document.getElementById('importProgressModal');
+      const progressBar = document.getElementById('importProgressBar');
+      const progressText = document.getElementById('importProgressText');
+      
+      progressModal.classList.remove('hidden');
+      progressModal.classList.add('flex');
+      progressBar.style.width = '0%';
+      progressText.textContent = '正在解析文件...';
+      
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        try {
+          const content = e.target.result;
+          const lines = parseCsv(content);
+          
+          if (lines.length === 0) {
+            throw new Error('CSV文件为空或格式不正确');
+          }
+          
+          let successCount = 0;
+          let updateCount = 0;
+          const total = lines.length;
+          
+          // 处理每一行数据
+          lines.forEach((line, index) => {
+            // 跳过空行
+            if (!line[0] || !line[1]) return;
+            
+            const fileName = line[0].trim();
+            let fileUrl = line[1].trim();
+            
+            // 确保URL格式正确
+            if (!fileUrl.startsWith('http://') && !fileUrl.startsWith('https://')) {
+              fileUrl = 'https://' + fileUrl;
+            }
+            
+            // 检查是否已存在同名文件
+            const existingFileIndex = currentFolder.children.findIndex(
+              item => item.type === 'file' && item.name === fileName
+            );
+            
+            if (existingFileIndex !== -1) {
+              // 存在同名文件，更新链接
+              currentFolder.children[existingFileIndex].url = fileUrl;
+              updateCount++;
+            } else {
+              // 不存在同名文件，创建新文件
+              const newFile = {
+                id: generateId(),
+                name: fileName,
+                type: 'file',
+                url: fileUrl
+              };
+              currentFolder.children.push(newFile);
+              successCount++;
+            }
+            
+            // 更新进度
+            const progress = Math.round(((index + 1) / total) * 100);
+            progressBar.style.width = `${progress}%`;
+            progressText.textContent = `正在处理: ${index + 1}/${total}`;
+          });
+          
+          // 保存数据
+          saveDataToHtml();
+          
+          // 显示结果
+          setTimeout(() => {
+            progressModal.classList.add('hidden');
+            progressModal.classList.remove('flex');
+            
+            const resultModal = document.getElementById('importResultModal');
+            const resultText = document.getElementById('importResultText');
+            
+            resultText.textContent = `成功导入 ${successCount} 个新文件，更新 ${updateCount} 个现有文件`;
+            resultModal.classList.remove('hidden');
+            resultModal.classList.add('flex');
+            
+            // 刷新内容
+            renderContent();
+          }, 500);
+          
+        } catch (error) {
+          console.error('导入失败:', error);
+          progressModal.classList.add('hidden');
+          progressModal.classList.remove('flex');
+          alert(`导入失败: ${error.message}`);
+        }
+       };
+      
+      reader.onerror = function() {
+        progressModal.classList.add('hidden');
+        progressModal.classList.remove('flex');
+        alert('读取文件时发生错误');
+      };
+      
+      reader.readAsText(file);
+    }
+    
+    // 解析CSV内容
+    function parseCsv(content) {
+      // 简单的CSV解析器，支持引号和换行
+      const lines = [];
+      let currentLine = [];
+      let currentField = '';
+      let inQuotes = false;
+      let escaped = false;
+      
+      for (let i = 0; i < content.length; i++) {
+        const char = content[i];
+        
+        if (escaped) {
+          currentField += char;
+          escaped = false;
+          continue;
+        }
+        
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          currentLine.push(currentField);
+          currentField = '';
+        } else if (char === '\\') {
+          escaped = true;
+        } else if ((char === '\n' || char === '\r') && !inQuotes) {
+          if (currentField || currentLine.length > 0) {
+            currentLine.push(currentField);
+            currentField = '';
+            lines.push(currentLine);
+            currentLine = [];
+          }
+          // 处理可能的\r\n组合
+          if (char === '\r' && i + 1 < content.length && content[i + 1] === '\n') {
+            i++;
+          }
+        } else {
+          currentField += char;
+        }
+      }
+       
+       // 添加最后一行
+      if (currentField || currentLine.length > 0) {
+        currentLine.push(currentField);
+        lines.push(currentLine);
+      }
+      
+      // 跳过标题行（如果第一行看起来像标题）
+      if (lines.length > 0 && 
+          (lines[0][0].toLowerCase().includes('文件名') || 
+           lines[0][0].toLowerCase().includes('名称') ||
+           lines[0][1]?.toLowerCase().includes('地址') ||
+           lines[0][1]?.toLowerCase().includes('url'))) {
+        lines.shift();
+      }
+      
+      return lines;
+    }
+    
+    // 检查并应用深色模式
+    function checkDarkMode() {
+      // 优先级：localStorage > fileSystem > 系统偏好
+      const savedTheme = localStorage.getItem('theme-preference');
+      let isDarkMode;
+      
+      if (savedTheme) {
+        // 使用保存的用户偏好
+        isDarkMode = savedTheme === 'dark';
+      } else if (fileSystem.hasOwnProperty('darkMode')) {
+        // 使用文件系统中的设置
+        isDarkMode = fileSystem.darkMode;
+      } else {
+        // 使用系统偏好
+        isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      }
+      
+      // 应用主题
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      
+      // 同步到fileSystem
+      fileSystem.darkMode = isDarkMode;
+      
+      // 添加平滑过渡效果
+      document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+    }
+    
+    // 切换深色/浅色模式
+    function toggleDarkMode() {
+      // 添加切换动画效果
+      const themeToggleBtn = document.getElementById('themeToggle');
+      themeToggleBtn.style.transform = 'scale(0.9)';
+      
+      // 短暂延迟后执行主题切换
+      setTimeout(() => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        fileSystem.darkMode = isDark;
+        
+        // 保存用户偏好到localStorage
+        localStorage.setItem('theme-preference', isDark ? 'dark' : 'light');
+        
+        // 恢复按钮状态
+        themeToggleBtn.style.transform = '';
+        
+        // 添加页面切换动画效果
+        document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+        
+        // 保存数据
+        saveDataToHtml();
+        
+        // 显示切换成功提示
+        showThemeChangeNotification(isDark);
+      }, 100);
+    }
+    
+    // 显示主题切换通知
+    function showThemeChangeNotification(isDark) {
+      const notification = document.createElement('div');
+      notification.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg transform transition-all duration-300 ${
+        isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'
+      } border ${isDark ? 'border-gray-700' : 'border-gray-200'}`;
+      notification.innerHTML = `
+        <div class="flex items-center space-x-2">
+          <i class="fa ${isDark ? 'fa-moon' : 'fa-sun'} text-${isDark ? 'blue' : 'yellow'}-500"></i>
+          <span>已切换到${isDark ? '深色' : '浅色'}模式</span>
+        </div>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      // 显示动画
+      setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+        notification.style.opacity = '1';
+      }, 10);
+      
+      // 3秒后自动消失
+      setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        notification.style.opacity = '0';
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 300);
+      }, 3000);
+    }
+    
+    // 渲染当前目录内容
+    function renderContent() {
+      const container = document.getElementById('contentContainer');
+      const emptyState = document.getElementById('emptyState');
+      
+      container.innerHTML = '';
+      
+      if (currentFolder.children.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      
+      emptyState.classList.add('hidden');
+      
+      // 先渲染文件夹，再渲染文件
+      const folders = currentFolder.children.filter(item => item.type === 'folder');
+      const files = currentFolder.children.filter(item => item.type === 'file');
+      
+      [...folders, ...files].forEach(item => {
+        const itemElement = document.createElement('div');
+        itemElement.setAttribute('data-id', item.id);
+        itemElement.setAttribute('data-type', item.type);
+        
+        if (item.type === 'folder') {
+          itemElement.className = 'bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700 folder-hover cursor-pointer flex flex-col h-full group';
+          itemElement.innerHTML = `
+            <div class="flex justify-between items-start mb-2">
+              <div class="flex items-center space-x-2">
+                <i class="fa fa-folder text-yellow-500 text-xl"></i>
+                <span class="font-medium truncate max-w-[120px]">${item.name}</span>
+              </div>
+              <div class="item-actions opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="edit-btn p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded" data-id="${item.id}" data-type="folder">
+                  <i class="fa fa-pencil text-gray-500"></i>
+                </button>
+                <button class="delete-btn p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded" data-id="${item.id}" data-type="folder">
+                  <i class="fa fa-trash text-red-500"></i>
+                </button>
+              </div>
+            </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-auto">${item.children.length} 个项目</p>
+          `;
+          
+          // 点击文件夹进入
+          itemElement.addEventListener('click', (e) => {
+            if (!e.target.closest('.item-actions') && !draggedItem) {
+              navigateToFolder(item.id);
+            }
+          });
+          
+          // 文件夹拖拽相关事件 - 作为放置目标
+          itemElement.addEventListener('dragover', handleDragOver);
+          itemElement.addEventListener('dragleave', handleDragLeave);
+          itemElement.addEventListener('drop', handleDrop);
+          
+        } else {
+          // 文件/链接
+          itemElement.className = 'bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700 file-hover flex flex-col h-full group';
+          itemElement.setAttribute('draggable', 'true'); // 使文件可拖拽
+          itemElement.innerHTML = `
+            <div class="flex justify-between items-start mb-2">
+              <div class="flex items-center space-x-2">
+                <i class="fa fa-file text-blue-500 text-xl"></i>
+                <span class="font-medium truncate max-w-[120px]">${item.name}</span>
+              </div>
+              <div class="item-actions opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="edit-btn p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded" data-id="${item.id}" data-type="file">
+                  <i class="fa fa-pencil text-gray-500"></i>
+                </button>
+                <button class="delete-btn p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded" data-id="${item.id}" data-type="file">
+                  <i class="fa fa-trash text-red-500"></i>
+                </button>
+              </div>
+            </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 truncate mt-auto">${item.url}</p>
+          `;
+          
+          // 点击链接打开
+          itemElement.addEventListener('click', (e) => {
+            if (!e.target.closest('.item-actions')) {
+              window.open(item.url, '_blank');
+            }
+          });
+          
+          // 文件拖拽相关事件
+          itemElement.addEventListener('dragstart', handleDragStart);
+          itemElement.addEventListener('dragend', handleDragEnd);
+        }
+        
+        container.appendChild(itemElement);
+      });
+      
+      // 为编辑和删除按钮添加事件监听
+      document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = btn.getAttribute('data-id');
+          const type = btn.getAttribute('data-type');
+          openEditModal(id, type);
+        });
+      });
+      
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = btn.getAttribute('data-id');
+          const type = btn.getAttribute('data-type');
+          openDeleteModal(id, type);
+        });
+      });
+      
+      // 更新路径导航
+      updatePathNavigation();
+    }
+    
+    // 拖拽开始事件处理
+    function handleDragStart(e) {
+      const itemId = this.getAttribute('data-id');
+      const itemType = this.getAttribute('data-type');
+      
+      // 只有文件可以被拖拽
+      if (itemType === 'file') {
+        draggedItem = {
+          id: itemId,
+          type: itemType,
+          sourceFolderId: currentFolder.id
+        };
+        
+        // 添加拖拽样式
+        setTimeout(() => {
+          this.classList.add('dragging');
+        }, 0);
+        
+        // 设置拖拽数据
+        e.dataTransfer.setData('text/plain', itemId);
+      }
+    }
+    
+    // 拖拽结束事件处理
+    function handleDragEnd() {
+      // 移除拖拽样式
+      this.classList.remove('dragging');
+      
+      // 清除所有拖拽悬停样式
+      document.querySelectorAll('.drag-over').forEach(el => {
+        el.classList.remove('drag-over');
+      });
+      
+      draggedItem = null;
+    }
+    
+    // 拖拽悬停事件处理
+    function handleDragOver(e) {
+      e.preventDefault(); // 允许放置
+      
+      // 只有当有文件被拖拽且目标是文件夹时才应用样式
+      if (draggedItem && draggedItem.type === 'file' && this.getAttribute('data-type') === 'folder') {
+        this.classList.add('drag-over');
+      }
+    }
+    
+    // 拖拽离开事件处理
+    function handleDragLeave() {
+      this.classList.remove('drag-over');
+    }
+    
+    // 放置事件处理
+    function handleDrop(e) {
+      e.preventDefault();
+      this.classList.remove('drag-over');
+      
+      // 确保有被拖拽的项目且目标是文件夹
+      if (draggedItem && draggedItem.type === 'file' && this.getAttribute('data-type') === 'folder') {
+        const targetFolderId = this.getAttribute('data-id');
+        
+        // 不允许拖放到自身所在的文件夹
+        if (draggedItem.sourceFolderId !== targetFolderId) {
+          moveItem(draggedItem.id, draggedItem.sourceFolderId, targetFolderId);
+        }
+      }
+    }
+    
+    // 移动项目到目标文件夹
+    function moveItem(itemId, sourceFolderId, targetFolderId) {
+      // 查找源文件夹和项目
+      const sourceResult = findFolderById(fileSystem, sourceFolderId);
+      if (!sourceResult) return;
+      
+      const sourceFolder = sourceResult.item;
+      const itemIndex = sourceFolder.children.findIndex(item => item.id === itemId);
+      if (itemIndex === -1) return;
+      
+      // 从源文件夹中移除项目
+      const [movedItem] = sourceFolder.children.splice(itemIndex, 1);
+      
+      // 查找目标文件夹并添加项目
+      const targetResult = findFolderById(fileSystem, targetFolderId);
+      if (targetResult) {
+        targetResult.item.children.push(movedItem);
+        
+        // 保存并刷新界面
+        saveDataToHtml();
+        renderContent();
+      }
+    }
+    
+    // 更新路径导航
+    function updatePathNavigation() {
+      const pathContainer = document.getElementById('pathNavigation');
+      pathContainer.innerHTML = '';
+      
+      // 递归查找路径上的所有文件夹
+      function buildPathNodes(currentId, path = []) {
+        if (currentId === 'root') {
+          return [{id: 'root', name: '首页'}, ...path.reverse()];
+        }
+        
+        const parentFolder = findFolderById(fileSystem, currentId);
+        if (parentFolder) {
+          path.push({id: parentFolder.item.id, name: parentFolder.item.name});
+          return buildPathNodes(parentFolder.parent.id, path);
+        }
+        
+        return [{id: 'root', name: '首页'}];
+      }
+      
+      const pathNodes = buildPathNodes(currentFolder.id);
+      
+      pathNodes.forEach((node, index) => {
+        const nodeElement = document.createElement('span');
+        nodeElement.className = 'cursor-pointer hover:text-primary';
+        nodeElement.textContent = node.name;
+        nodeElement.setAttribute('data-id', node.id);
+        
+        if (index < pathNodes.length - 1) {
+          const separator = document.createElement('span');
+          separator.className = 'mx-2 text-gray-400';
+          separator.textContent = '/';
+          pathContainer.appendChild(nodeElement);
+          pathContainer.appendChild(separator);
+        } else {
+          nodeElement.classList.add('text-primary', 'font-medium');
+          pathContainer.appendChild(nodeElement);
+        }
+        
+        // 点击导航到对应文件夹
+        nodeElement.addEventListener('click', () => {
+          navigateToFolder(node.id);
+        });
+      });
+    }
+    
+    // 导航到指定文件夹
+    function navigateToFolder(folderId) {
+      const result = findFolderById(fileSystem, folderId);
+      if (result && result.item.type === 'folder') {
+        currentFolder = result.item;
+        renderContent();
+      }
+    }
+    
+    // 查找指定ID的文件夹
+    function findFolderById(root, targetId) {
+      if (root.id === targetId) {
+        return {item: root, parent: null};
+      }
+      
+      for (const child of root.children) {
+        if (child.id === targetId && child.type === 'folder') {
+          return {item: child, parent: root};
+        }
+        
+        if (child.type === 'folder') {
+          const result = findFolderById(child, targetId);
+          if (result) {
+            return result;
+          }
+        }
+      }
+      
+      return null;
+    }
+    
+    // 生成唯一ID
+    function generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    }
+    
+    // 添加新文件夹
+    function addFolder(name) {
+      const newFolder = {
+        id: generateId(),
+        name: name,
+        type: 'folder',
+        children: []
+      };
+      
+      currentFolder.children.push(newFolder);
+      saveDataToHtml();
+      renderContent();
+    }
+    
+    // 添加新文件/链接
+    function addFile(name, url) {
+      // 确保URL格式正确
+      let formattedUrl = url;
+      if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+        formattedUrl = 'https://' + formattedUrl;
+      }
+      
+      const newFile = {
+        id: generateId(),
+        name: name,
+        type: 'file',
+        url: formattedUrl
+      };
+      
+      currentFolder.children.push(newFile);
+      saveDataToHtml();
+      renderContent();
+    }
+    
+    // 编辑项目
+    function editItem(id, type, newName, newUrl = null) {
+      // 查找项目
+      function findItem(parent, targetId) {
+        for (const item of parent.children) {
+          if (item.id === targetId) {
+            return {item, parent};
+          }
+          
+          if (item.type === 'folder') {
+            const result = findItem(item, targetId);
+            if (result) {
+              return result;
+            }
+          }
+        }
+        return null;
+      }
+      
+      const result = findItem(fileSystem, id);
+      if (result) {
+        result.item.name = newName;
+        if (type === 'file' && newUrl) {
+          // 确保URL格式正确
+          let formattedUrl = newUrl;
+          if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+            formattedUrl = 'https://' + formattedUrl;
+          }
+          result.item.url = formattedUrl;
+        }
+        
+        saveDataToHtml();
+        renderContent();
+        return true;
+      }
+      
+      return false;
+    }
+    
+    // 删除项目
+    function deleteItemById(id, type) {
+      // 查找并删除项目
+      function removeItem(parent, targetId) {
+        for (let i = 0; i < parent.children.length; i++) {
+          if (parent.children[i].id === targetId) {
+            parent.children.splice(i, 1);
+            return true;
+          }
+          
+          if (parent.children[i].type === 'folder' && removeItem(parent.children[i], targetId)) {
+            return true;
+          }
+        }
+        return false;
+      }
+      
+      const deleted = removeItem(fileSystem, id);
+      if (deleted) {
+        // 如果删除的是当前文件夹，回到根目录
+        if (id === currentFolder.id) {
+          currentFolder = fileSystem;
+        }
+        
+        saveDataToHtml();
+        renderContent();
+        return true;
+      }
+      
+      return false;
+    }
+    
+    // 打开新建文件夹模态框
+    function openFolderModal() {
+      document.getElementById('folderName').value = '';
+      const modal = document.getElementById('folderModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.getElementById('folderName').focus();
+    }
+    
+    // 打开添加文件模态框
+    function openFileModal() {
+      document.getElementById('fileName').value = '';
+      document.getElementById('fileUrl').value = '';
+      const modal = document.getElementById('fileModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.getElementById('fileName').focus();
+    }
+    
+    // 打开编辑模态框
+    function openEditModal(id, type) {
+      // 查找项目
+      let item = null;
+      
+      function findItem(parent, targetId) {
+        for (const i of parent.children) {
+          if (i.id === targetId) {
+            return i;
+          }
+          
+          if (i.type === 'folder') {
+            const found = findItem(i, targetId);
+            if (found) return found;
+          }
+        }
+        return null;
+      }
+      
+      item = findItem(fileSystem, id);
+      if (!item) return;
+      
+      document.getElementById('editItemId').value = id;
+      document.getElementById('editItemType').value = type;
+      document.getElementById('editName').value = item.name;
+      
+      if (type === 'file') {
+        document.getElementById('editUrlContainer').classList.remove('hidden');
+        document.getElementById('editUrl').value = item.url;
+        document.getElementById('editModalTitle').textContent = '编辑链接';
+      } else {
+        document.getElementById('editUrlContainer').classList.add('hidden');
+        document.getElementById('editModalTitle').textContent = '编辑文件夹';
+      }
+      
+      const modal = document.getElementById('editModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.getElementById('editName').focus();
+    }
+    
+    // 打开删除模态框
+    function openDeleteModal(id, type) {
+      deleteItem = {id, type};
+      document.getElementById('deleteMessage').textContent = 
+        type === 'folder' ? '此文件夹及其包含的所有内容都将被删除，且无法恢复。' : '此链接将被删除，且无法恢复。';
+      const modal = document.getElementById('deleteModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+    
+    // 打开指定模态框
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+    
+    // 关闭所有模态框
+    function closeAllModals() {
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      });
+    }
+    
+    // 设置事件监听器
+    function setupEventListeners() {
+      // 导入按钮
+      document.getElementById('importBtn').addEventListener('click', () => {
+        document.getElementById('fileInput').click();
+      });
+      
+      // 文件选择
+      document.getElementById('fileInput').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          // 检查文件类型
+          if (file.name.endsWith('.csv') || file.type === 'text/csv') {
+            importCsvFile(file);
+          } else {
+            alert('请选择CSV格式的文件');
+          }
+          // 重置文件输入，允许重复选择同一个文件
+          e.target.value = '';
+        }
+      });
+      
+      // 新建文件夹按钮
+      document.getElementById('addFolderBtn').addEventListener('click', openFolderModal);
+      
+      // 添加文件按钮
+      document.getElementById('addFileBtn').addEventListener('click', openFileModal);
+      
+      // 刷新按钮
+      document.getElementById('refreshBtn').addEventListener('click', renderContent);
+      
+      // 导出按钮
+      document.getElementById('exportBtn').addEventListener('click', exportHtmlFile);
+      
+      // 主题切换按钮
+      document.getElementById('themeToggle').addEventListener('click', toggleDarkMode);
+      
+      // 文件夹表单提交
+      document.getElementById('folderForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const folderName = document.getElementById('folderName').value.trim();
+        if (folderName) {
+          addFolder(folderName);
+          closeAllModals();
+        }
+      });
+      
+      // 文件表单提交
+      document.getElementById('fileForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const fileName = document.getElementById('fileName').value.trim();
+        const fileUrl = document.getElementById('fileUrl').value.trim();
+        
+        if (fileName && fileUrl) {
+          addFile(fileName, fileUrl);
+          closeAllModals();
+        }
+      });
+      
+      // 编辑表单提交
+      document.getElementById('editForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('editItemId').value;
+        const type = document.getElementById('editItemType').value;
+        const newName = document.getElementById('editName').value.trim();
+        let newUrl = null;
+        
+        if (type === 'file') {
+          newUrl = document.getElementById('editUrl').value.trim();
+        }
+        
+        if (newName) {
+          editItem(id, type, newName, newUrl);
+          closeAllModals();
+        }
+      });
+      
+      // 确认删除
+      document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+        if (deleteItem) {
+          deleteItemById(deleteItem.id, deleteItem.type);
+          deleteItem = null;
+          closeAllModals();
+        }
+      });
+      
+      // 关闭模态框按钮
+      document.querySelectorAll('.modal-close').forEach(btn => {
+        btn.addEventListener('click', closeAllModals);
+      });
+      
+      // 点击模态框外部关闭
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            closeAllModals();
+          }
+        });
+      });
+      
+      // 搜索功能
+      document.getElementById('searchInput').addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase().trim();
+        const items = document.querySelectorAll('#contentContainer > div');
+        
+        items.forEach(item => {
+          const name = item.querySelector('span.font-medium').textContent.toLowerCase();
+          if (name.includes(searchTerm)) {
+            item.style.display = '';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+      
+      // GitHub同步按钮
+      document.getElementById('githubSyncBtn').addEventListener('click', () => {
+        openModal('githubSyncModal');
+        GitHubSync.loadRepoList();
+      });
+
+      // 手动同步按钮
+      document.getElementById('manualSyncBtn').addEventListener('click', () => {
+        GitHubSync.syncAllRepositories();
+      });
+
+      // 管理按钮
+      document.getElementById('manageSyncBtn').addEventListener('click', () => {
+        openModal('githubSyncModal');
+        GitHubSync.loadRepoList();
+      });
+      
+      // GitHub同步相关事件监听器
+      setupGitHubSyncEventListeners();
+    }
+    
+    // 设置GitHub同步相关事件监听器
+    function setupGitHubSyncEventListeners() {
+      // 添加仓库表单
+      document.getElementById('addRepoForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const repoUrl = document.getElementById('repoUrl').value.trim();
+        const folderName = document.getElementById('repoFolderName').value.trim();
+        const branch = document.getElementById('repoBranch').value.trim() || 'main';
+        const fileExtensions = document.getElementById('fileExtensions').value.trim();
+        const pathPattern = document.getElementById('pathPattern').value.trim();
+        const clearBeforeSync = document.getElementById('clearBeforeSync').checked;
+        
+        if (repoUrl) {
+          try {
+            const config = {
+              url: repoUrl,
+              folderName: folderName || null,
+              branch: branch,
+              fileExtensions: fileExtensions ? fileExtensions.split(',').map(ext => ext.trim()) : [],
+              pathPattern: pathPattern || null,
+              clearBeforeSync: clearBeforeSync
+            };
+            
+            await GitHubSync.addRepository(config);
+            document.getElementById('addRepoForm').reset();
+            document.getElementById('repoBranch').value = 'main';
+            GitHubSync.loadRepoList();
+            GitHubSync.showMessage('仓库添加成功', 'success');
+          } catch (error) {
+            GitHubSync.showMessage('添加仓库失败: ' + error.message, 'error');
+          }
+        }
+      });
+      
+      // 测试仓库连接
+      document.getElementById('testRepoBtn').addEventListener('click', async () => {
+        const repoUrl = document.getElementById('repoUrl').value.trim();
+        if (repoUrl) {
+          await GitHubSync.testRepository(repoUrl);
+        } else {
+          GitHubSync.showMessage('请先输入仓库URL', 'error');
+        }
+      });
+      
+      // 高级选项切换
+      document.getElementById('toggleAdvancedOptions').addEventListener('click', () => {
+        const options = document.getElementById('advancedOptions');
+        const icon = document.querySelector('#toggleAdvancedOptions i');
+        
+        if (options.classList.contains('hidden')) {
+          options.classList.remove('hidden');
+          icon.classList.remove('fa-chevron-down');
+          icon.classList.add('fa-chevron-up');
+        } else {
+          options.classList.add('hidden');
+          icon.classList.remove('fa-chevron-up');
+          icon.classList.add('fa-chevron-down');
+        }
+      });
+      
+      // 保存全局设置
+      document.getElementById('saveGlobalSettings').addEventListener('click', () => {
+        const syncInterval = parseInt(document.getElementById('syncInterval').value) || 30;
+        const githubToken = document.getElementById('githubToken').value.trim();
+        
+        GitHubSync.updateGlobalSettings({
+          syncInterval: syncInterval,
+          githubToken: githubToken
+        });
+        
+        GitHubSync.showMessage('设置已保存', 'success');
+      });
+    }
+    
+    // GitHub 仓库同步功能模块
+    const GitHubSync = {
+      // 配置信息
+      config: {
+        apiBase: 'https://api.github.com',
+        rateLimit: 60, // GitHub API 每小时限制
+        timeout: 10000, // 请求超时时间（毫秒）
+        retryAttempts: 3, // 重试次数
+        syncInterval: 30 * 60 * 1000 // 30分钟自动同步间隔
+      },
+
+      // 同步状态
+      syncState: {
+        isRunning: false,
+        lastSync: null,
+        repositories: [], // 已配置的仓库列表
+        errors: [],
+        autoSyncTimer: null,
+        isOnline: navigator.onLine,
+        offlineQueue: [],
+        networkRetryCount: 0,
+        lastNetworkCheck: null
+      },
+
+      /**
+       * 解析GitHub仓库URL
+       * @param {string} url - GitHub仓库URL
+       * @returns {object|null} 解析结果 {owner, repo, branch}
+       */
+      parseRepoUrl(url) {
+        try {
+          // 支持多种GitHub URL格式
+          const patterns = [
+            /github\.com\/([^/]+)\/([^/]+)(?:\/tree\/([^/]+))?/,
+            /github\.com\/([^/]+)\/([^/]+)\.git/,
+            /api\.github\.com\/repos\/([^/]+)\/([^/]+)/
+          ];
+
+          for (const pattern of patterns) {
+            const match = url.match(pattern);
+            if (match) {
+              return {
+                owner: match[1],
+                repo: match[2].replace(/\.git$/, ''),
+                branch: match[3] || 'main'
+              };
+            }
+          }
+          return null;
+        } catch (error) {
+          console.error('解析仓库URL失败:', error);
+          return null;
+        }
+      },
+
+      /**
+       * 发送GitHub API请求
+       * @param {string} endpoint - API端点
+       * @param {object} options - 请求选项
+       * @returns {Promise} API响应
+       */
+      async apiRequest(endpoint, options = {}) {
+        const url = `${this.config.apiBase}${endpoint}`;
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/vnd.github.v3+json',
+            'User-Agent': 'FlyFish-Manager/1.0'
+          },
+          ...options
+        };
+
+        // 添加认证头（如果有token）
+        const token = localStorage.getItem('github_token');
+        if (token) {
+          requestOptions.headers['Authorization'] = `token ${token}`;
+        }
+
+        let lastError;
+        for (let attempt = 1; attempt <= this.config.retryAttempts; attempt++) {
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
+            
+            const response = await fetch(url, {
+              ...requestOptions,
+              signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+
+            // 详细的HTTP状态码处理
+            if (!response.ok) {
+              const errorData = await response.text().catch(() => 'Unknown error');
+              let errorMessage;
+              
+              switch (response.status) {
+                case 401:
+                  errorMessage = 'GitHub访问令牌无效或已过期，请检查令牌设置';
+                  break;
+                case 403:
+                  errorMessage = response.headers.get('X-RateLimit-Remaining') === '0' 
+                    ? 'GitHub API请求频率限制，请稍后再试' 
+                    : '访问被拒绝，请检查仓库权限';
+                  break;
+                case 404:
+                  errorMessage = '仓库或文件不存在，请检查URL和分支名称';
+                  break;
+                case 422:
+                  errorMessage = '请求参数无效，请检查仓库配置';
+                  break;
+                case 500:
+                case 502:
+                case 503:
+                case 504:
+                  errorMessage = 'GitHub服务器暂时不可用，正在重试...';
+                  break;
+                default:
+                  errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+              }
+              
+              const error = new Error(errorMessage);
+              error.status = response.status;
+              error.response = response;
+              throw error;
+            }
+
+            return await response.json();
+          } catch (error) {
+            lastError = error;
+            
+            // 分类错误类型
+            let shouldRetry = false;
+            let errorType = 'unknown';
+            
+            if (error.name === 'AbortError') {
+              errorType = 'timeout';
+              shouldRetry = true;
+            } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
+              errorType = 'network';
+              shouldRetry = true;
+            } else if (error.status) {
+              errorType = 'http';
+              // 对于服务器错误（5xx）和部分客户端错误，进行重试
+              shouldRetry = error.status >= 500 || error.status === 429;
+            }
+            
+            console.warn(`API请求失败 (尝试 ${attempt}/${this.config.retryAttempts}, 错误类型: ${errorType}):`, error.message);
+            
+            // 记录错误到同步状态
+            this.syncState.errors.push({
+              timestamp: new Date().toISOString(),
+              endpoint,
+              attempt,
+              error: error.message,
+              type: errorType
+            });
+            
+            if (attempt < this.config.retryAttempts && shouldRetry) {
+              // 根据错误类型调整重试延迟
+              let delay = Math.pow(2, attempt) * 1000;
+              if (error.status === 429) {
+                // 对于频率限制，使用更长的延迟
+                delay = Math.max(delay, 60000); // 至少等待1分钟
+              }
+              
+              await new Promise(resolve => setTimeout(resolve, delay));
+            } else if (!shouldRetry) {
+              // 对于不应重试的错误，直接抛出
+              break;
+            }
+          }
+        }
+        
+        // 增强错误信息
+        if (lastError) {
+          const enhancedError = new Error(`GitHub API请求最终失败: ${lastError.message}`);
+          enhancedError.originalError = lastError;
+          enhancedError.endpoint = endpoint;
+          enhancedError.attempts = this.config.retryAttempts;
+          throw enhancedError;
+        }
+      },
+
+      /**
+       * 获取仓库内容
+       * @param {string} owner - 仓库所有者
+       * @param {string} repo - 仓库名称
+       * @param {string} path - 文件路径（可选）
+       * @param {string} branch - 分支名称
+       * @returns {Promise} 仓库内容
+       */
+      async getRepoContents(owner, repo, path = '', branch = 'main') {
+        const endpoint = `/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
+        return await this.apiRequest(endpoint);
+      },
+
+      /**
+       * 递归获取仓库所有文件
+       * @param {string} owner - 仓库所有者
+       * @param {string} repo - 仓库名称
+       * @param {string} branch - 分支名称
+       * @param {string} basePath - 基础路径
+       * @returns {Promise} 文件列表
+       */
+      async getAllRepoFiles(owner, repo, branch = 'main', basePath = '') {
+        const files = [];
+        
+        try {
+          const contents = await this.getRepoContents(owner, repo, basePath, branch);
+          
+          if (Array.isArray(contents)) {
+            for (const item of contents) {
+              if (item.type === 'file') {
+                files.push({
+                  name: item.name,
+                  path: item.path,
+                  url: item.html_url,
+                  downloadUrl: item.download_url,
+                  size: item.size,
+                  sha: item.sha
+                });
+              } else if (item.type === 'dir') {
+                // 递归获取子目录内容
+                const subFiles = await this.getAllRepoFiles(owner, repo, branch, item.path);
+                files.push(...subFiles);
+              }
+            }
+          }
+        } catch (error) {
+          console.error(`获取路径 ${basePath} 内容失败:`, error);
+          this.syncState.errors.push(`获取路径 ${basePath} 失败: ${error.message}`);
+        }
+        
+        return files;
+      },
+
+      /**
+       * 同步GitHub仓库到文件系统
+       * @param {object} repoConfig - 仓库配置
+       * @returns {Promise} 同步结果
+       */
+      async syncRepository(repoConfig) {
+        const { owner, repo, branch, folderName, fileFilter } = repoConfig;
+        
+        try {
+          console.log(`开始同步仓库: ${owner}/${repo}`);
+          
+          // 获取所有文件
+          const files = await this.getAllRepoFiles(owner, repo, branch);
+          
+          // 应用文件过滤器
+          const filteredFiles = this.applyFileFilter(files, fileFilter);
+          
+          // 创建或更新目标文件夹
+          const targetFolder = this.createOrUpdateFolder(folderName || `${owner}-${repo}`);
+          
+          // 清空现有内容（可选）
+          if (repoConfig.clearBeforeSync) {
+            targetFolder.children = [];
+          }
+          
+          // 添加文件到文件夹
+          for (const file of filteredFiles) {
+            const fileItem = {
+              id: generateId(),
+              name: file.name,
+              type: 'file',
+              url: file.url,
+              metadata: {
+                source: 'github',
+                repo: `${owner}/${repo}`,
+                path: file.path,
+                sha: file.sha,
+                downloadUrl: file.downloadUrl,
+                syncTime: new Date().toISOString()
+              }
+            };
+            
+            // 检查是否已存在相同文件（基于路径）
+            const existingIndex = targetFolder.children.findIndex(
+              item => item.metadata?.path === file.path
+            );
+            
+            if (existingIndex >= 0) {
+              // 更新现有文件
+              targetFolder.children[existingIndex] = fileItem;
+            } else {
+              // 添加新文件
+              targetFolder.children.push(fileItem);
+            }
+          }
+          
+          // 更新同步状态
+          repoConfig.lastSync = new Date().toISOString();
+          repoConfig.fileCount = filteredFiles.length;
+          repoConfig.syncCount = (repoConfig.syncCount || 0) + 1;
+          
+          // 记录同步历史
+          this.recordSyncHistory(
+            repoConfig.id,
+            true,
+            `成功同步 ${filteredFiles.length} 个文件`,
+            filteredFiles.length
+          );
+          
+          console.log(`仓库同步完成: ${owner}/${repo}, 文件数量: ${filteredFiles.length}`);
+          
+          return {
+            success: true,
+            fileCount: filteredFiles.length,
+            folderName: targetFolder.name
+          };
+          
+        } catch (error) {
+          console.error(`同步仓库失败: ${owner}/${repo}`, error);
+          this.syncState.errors.push(`同步 ${owner}/${repo} 失败: ${error.message}`);
+          
+          // 记录同步失败历史
+          this.recordSyncHistory(
+            repoConfig.id,
+            false,
+            `同步失败: ${error.message}`,
+            0
+          );
+          
+          return {
+            success: false,
+            error: error.message
+          };
+        }
+      },
+
+      /**
+       * 应用文件过滤器
+       * @param {Array} files - 文件列表
+       * @param {object} filter - 过滤器配置
+       * @returns {Array} 过滤后的文件列表
+       */
+      applyFileFilter(files, filter = {}) {
+        if (!filter || Object.keys(filter).length === 0) {
+          return files;
+        }
+        
+        return files.filter(file => {
+          // 文件扩展名过滤
+          if (filter.extensions && filter.extensions.length > 0) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (!filter.extensions.includes(ext)) {
+              return false;
+            }
+          }
+          
+          // 文件名模式过滤
+          if (filter.namePattern) {
+            const regex = new RegExp(filter.namePattern, 'i');
+            if (!regex.test(file.name)) {
+              return false;
+            }
+          }
+          
+          // 路径过滤
+          if (filter.pathPattern) {
+            const regex = new RegExp(filter.pathPattern, 'i');
+            if (!regex.test(file.path)) {
+              return false;
+            }
+          }
+          
+          // 文件大小过滤
+          if (filter.maxSize && file.size > filter.maxSize) {
+            return false;
+          }
+          
+          return true;
+        });
+      },
+
+      /**
+       * 创建或更新文件夹
+       * @param {string} folderName - 文件夹名称
+       * @returns {object} 文件夹对象
+       */
+      createOrUpdateFolder(folderName) {
+        // 在当前文件夹中查找是否已存在
+        let targetFolder = currentFolder.children.find(
+          item => item.type === 'folder' && item.name === folderName
+        );
+        
+        if (!targetFolder) {
+          // 创建新文件夹
+          targetFolder = {
+            id: generateId(),
+            name: folderName,
+            type: 'folder',
+            children: [],
+            metadata: {
+              source: 'github',
+              createdAt: new Date().toISOString()
+            }
+          };
+          currentFolder.children.push(targetFolder);
+        }
+        
+        return targetFolder;
+      },
+
+      /**
+       * 同步所有配置的仓库
+       * @returns {Promise} 同步结果
+       */
+      async syncAllRepositories() {
+        if (this.syncState.isRunning) {
+          console.warn('同步正在进行中，跳过本次同步');
+          return;
+        }
+        
+        this.syncState.isRunning = true;
+        this.syncState.errors = [];
+        
+        try {
+          const results = [];
+          
+          for (const repoConfig of this.syncState.repositories) {
+            if (repoConfig.enabled !== false) {
+              const result = await this.syncRepository(repoConfig);
+              results.push({ ...result, repo: repoConfig });
+            }
+          }
+          
+          this.syncState.lastSync = new Date().toISOString();
+          
+          // 保存数据
+          this.saveConfig();
+          saveDataToHtml();
+          renderContent();
+          
+          // 显示同步结果
+          this.showSyncResults(results);
+          
+          return results;
+          
+        } finally {
+          this.syncState.isRunning = false;
+        }
+      },
+
+      /**
+       * 显示同步结果
+       * @param {Array} results - 同步结果列表
+       */
+      showSyncResults(results) {
+        const successCount = results.filter(r => r.success).length;
+        const totalCount = results.length;
+        const totalFiles = results.reduce((sum, r) => sum + (r.fileCount || 0), 0);
+        
+        let message = `同步完成: ${successCount}/${totalCount} 个仓库成功同步，共 ${totalFiles} 个文件`;
+        
+        if (this.syncState.errors.length > 0) {
+          message += `\n\n错误信息:\n${this.syncState.errors.slice(0, 5).join('\n')}`;
+          if (this.syncState.errors.length > 5) {
+            message += `\n... 还有 ${this.syncState.errors.length - 5} 个错误`;
+          }
+        }
+        
+        // 更新状态显示
+        this.updateSyncStatus(message);
+        
+        console.log('GitHub同步结果:', results);
+      },
+
+      /**
+       * 更新同步状态显示
+       * @param {string} message - 状态消息
+       */
+      updateSyncStatus(message) {
+        const statusElement = document.getElementById('githubSyncStatus');
+        if (statusElement) {
+          statusElement.textContent = message;
+          statusElement.className = this.syncState.errors.length > 0 ? 
+            'text-yellow-600 dark:text-yellow-400' : 
+            'text-green-600 dark:text-green-400';
+        }
+      },
+
+      /**
+       * 记录同步历史
+       * @param {string} repoId - 仓库ID
+       * @param {boolean} success - 是否成功
+       * @param {string} message - 消息
+       * @param {number} fileCount - 文件数量
+       */
+      recordSyncHistory(repoId, success, message, fileCount = 0) {
+        const history = {
+          id: generateId(),
+          repoId: repoId,
+          timestamp: new Date().toISOString(),
+          success: success,
+          message: message,
+          fileCount: fileCount,
+          duration: 0
+        };
+        
+        if (!this.syncState.syncHistory) {
+          this.syncState.syncHistory = [];
+        }
+        
+        this.syncState.syncHistory.unshift(history);
+        
+        // 只保留最近100条记录
+        if (this.syncState.syncHistory.length > 100) {
+          this.syncState.syncHistory = this.syncState.syncHistory.slice(0, 100);
+        }
+        
+        this.saveConfig();
+      },
+
+      /**
+       * 获取仓库同步统计信息
+       * @param {string} repoId - 仓库ID
+       * @returns {object} 统计信息
+       */
+      getRepoStats(repoId) {
+        const repo = this.syncState.repositories.find(r => r.id === repoId);
+        if (!repo) return null;
+        
+        const history = this.syncState.syncHistory ? 
+          this.syncState.syncHistory.filter(h => h.repoId === repoId) : [];
+        
+        const successCount = history.filter(h => h.success).length;
+        const failureCount = history.filter(h => !h.success).length;
+        const lastSync = history.length > 0 ? history[0] : null;
+        
+        return {
+          totalSyncs: repo.syncCount || 0,
+          successCount: successCount,
+          failureCount: failureCount,
+          successRate: history.length > 0 ? (successCount / history.length * 100).toFixed(1) : 0,
+          lastSync: lastSync,
+          addedAt: repo.addedAt,
+          enabled: repo.enabled
+        };
+      },
+
+      /**
+       * 清理过期的同步历史记录
+       * @param {number} daysToKeep - 保留天数，默认30天
+       */
+      cleanupSyncHistory(daysToKeep = 30) {
+        if (!this.syncState.syncHistory) return;
+        
+        const cutoffDate = new Date();
+        cutoffDate.setDate(cutoffDate.getDate() - daysToKeep);
+        
+        const originalLength = this.syncState.syncHistory.length;
+        this.syncState.syncHistory = this.syncState.syncHistory.filter(
+          history => new Date(history.timestamp) > cutoffDate
+        );
+        
+        const removedCount = originalLength - this.syncState.syncHistory.length;
+        if (removedCount > 0) {
+          console.log(`清理了 ${removedCount} 条过期的同步历史记录`);
+          this.saveConfig();
+        }
+      },
+
+      /**
+       * 启动自动同步
+       */
+      startAutoSync() {
+        this.stopAutoSync(); // 先停止现有的定时器
+        
+        // 只有在有启用的仓库时才启动自动同步
+        const enabledRepos = this.syncState.repositories.filter(repo => repo.enabled !== false);
+        if (enabledRepos.length === 0) {
+          console.log('没有启用的仓库，跳过自动同步');
+          return;
+        }
+        
+        this.syncState.autoSyncTimer = setInterval(async () => {
+          console.log('执行自动同步...');
+          
+          // 检查是否已经在同步中
+          if (this.syncState.isRunning) {
+            console.log('同步正在进行中，跳过本次自动同步');
+            return;
+          }
+          
+          // 检查网络连接状态
+          if (!this.syncState.isOnline) {
+            const isOnline = await this.checkNetworkConnection();
+            if (!isOnline) {
+              console.log('网络不可用，跳过自动同步');
+              this.updateSyncStatus('网络不可用，等待连接恢复...');
+              return;
+            }
+          }
+          
+          try {
+            await this.syncAllRepositories();
+            
+            // 更新同步状态显示
+            const now = new Date();
+            const statusText = `最后同步: ${now.toLocaleString()}`;
+            this.updateSyncStatus(statusText);
+            
+          } catch (error) {
+            console.error('自动同步失败:', error);
+            
+            // 如果是网络错误，添加到离线队列
+            if (this.isNetworkError(error)) {
+              this.addToOfflineQueue({ type: 'sync_all' });
+              this.updateSyncStatus('网络异常，已加入离线队列');
+            } else {
+              this.updateSyncStatus(`同步失败: ${error.message}`);
+            }
+          }
+        }, this.config.syncInterval);
+        
+        console.log(`自动同步已启动，间隔: ${this.config.syncInterval / 1000 / 60} 分钟`);
+        
+        // 显示自动同步状态
+        const statusElement = document.getElementById('githubSyncStatus');
+        if (statusElement) {
+          statusElement.textContent = `自动同步已启动 (${this.config.syncInterval / 1000 / 60}分钟间隔)`;
+          statusElement.className = 'text-green-600 dark:text-green-400';
+        }
+      },
+
+      /**
+       * 停止自动同步
+       */
+      stopAutoSync() {
+        if (this.syncState.autoSyncTimer) {
+          clearInterval(this.syncState.autoSyncTimer);
+          this.syncState.autoSyncTimer = null;
+          console.log('自动同步已停止');
+        }
+      },
+
+      /**
+       * 添加仓库配置
+       * @param {object} config - 仓库配置
+       */
+      async addRepository(config) {
+        const repoInfo = this.parseRepoUrl(config.url);
+        if (!repoInfo) {
+          throw new Error('无效的GitHub仓库URL');
+        }
+        
+        // 检查仓库是否已存在
+        const existingRepo = this.syncState.repositories.find(
+          repo => repo.owner === repoInfo.owner && repo.repo === repoInfo.repo
+        );
+        if (existingRepo) {
+          throw new Error('该仓库已经添加过了');
+        }
+        
+        const repoConfig = {
+          id: generateId(),
+          ...repoInfo,
+          folderName: config.folderName || `${repoInfo.owner}-${repoInfo.repo}`,
+          branch: config.branch || 'main',
+          fileExtensions: config.fileExtensions || [],
+          pathPattern: config.pathPattern || null,
+          enabled: true,
+          clearBeforeSync: config.clearBeforeSync || false,
+          addedAt: new Date().toISOString(),
+          lastSync: null,
+          syncCount: 0
+        };
+        
+        this.syncState.repositories.push(repoConfig);
+        this.saveConfig();
+        
+        // 立即进行一次同步测试
+        try {
+          await this.syncRepository(repoConfig);
+          this.showMessage(`仓库 ${repoInfo.owner}/${repoInfo.repo} 添加并同步成功`, 'success');
+        } catch (error) {
+          this.showMessage(`仓库添加成功，但首次同步失败: ${error.message}`, 'warning');
+        }
+        
+        return repoConfig;
+      },
+
+      /**
+       * 移除仓库配置
+       * @param {string} repoId - 仓库ID
+       */
+      removeRepository(repoId) {
+        const index = this.syncState.repositories.findIndex(repo => repo.id === repoId);
+        if (index >= 0) {
+          this.syncState.repositories.splice(index, 1);
+          this.saveConfig();
+          return true;
+        }
+        return false;
+      },
+
+      /**
+       * 保存配置到本地存储
+       */
+      saveConfig() {
+        try {
+          localStorage.setItem('github_sync_config', JSON.stringify({
+            repositories: this.syncState.repositories,
+            lastSync: this.syncState.lastSync,
+            syncHistory: this.syncState.syncHistory || [],
+            config: this.config
+          }));
+        } catch (error) {
+          console.error('保存GitHub同步配置失败:', error);
+        }
+      },
+
+      /**
+       * 从本地存储加载配置
+       */
+      loadConfig() {
+        try {
+          const saved = localStorage.getItem('github_sync_config');
+          if (saved) {
+            const config = JSON.parse(saved);
+            this.syncState.repositories = config.repositories || [];
+            this.syncState.lastSync = config.lastSync;
+            this.syncState.syncHistory = config.syncHistory || [];
+            if (config.config) {
+              Object.assign(this.config, config.config);
+            }
+          }
+        } catch (error) {
+          console.error('加载GitHub同步配置失败:', error);
+        }
+      },
+
+      /**
+       * 显示消息提示
+       * @param {string} message - 消息内容
+       * @param {string} type - 消息类型 (success, error, warning, info)
+       */
+      showMessage(message, type = 'info') {
+        // 创建消息元素
+        const messageEl = document.createElement('div');
+        messageEl.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transition-all transform translate-x-full opacity-0`;
+        
+        // 根据类型设置样式
+        const styles = {
+          success: 'bg-green-500 text-white',
+          error: 'bg-red-500 text-white',
+          warning: 'bg-yellow-500 text-white',
+          info: 'bg-blue-500 text-white'
+        };
+        
+        messageEl.className += ` ${styles[type] || styles.info}`;
+        messageEl.innerHTML = `
+          <div class="flex items-center space-x-2">
+            <i class="fa fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation-triangle' : type === 'warning' ? 'exclamation' : 'info'}"></i>
+            <span>${message}</span>
+          </div>
+        `;
+        
+        document.body.appendChild(messageEl);
+        
+        // 显示动画
+        setTimeout(() => {
+          messageEl.classList.remove('translate-x-full', 'opacity-0');
+        }, 100);
+        
+        // 自动隐藏
+        setTimeout(() => {
+          messageEl.classList.add('translate-x-full', 'opacity-0');
+          setTimeout(() => {
+            if (messageEl.parentNode) {
+              messageEl.parentNode.removeChild(messageEl);
+            }
+          }, 300);
+        }, 3000);
+      },
+
+      /**
+       * 测试仓库连接
+       * @param {string} repoUrl - 仓库URL
+       */
+      async testRepository(repoUrl) {
+        try {
+          const repoInfo = this.parseRepoUrl(repoUrl);
+          if (!repoInfo) {
+            throw new Error('无效的GitHub仓库URL');
+          }
+          
+          this.showMessage('正在测试连接...', 'info');
+          
+          // 尝试获取仓库信息
+          const repoData = await this.apiRequest(`/repos/${repoInfo.owner}/${repoInfo.repo}`);
+          
+          this.showMessage(`连接成功！仓库: ${repoData.full_name}`, 'success');
+          return true;
+          
+        } catch (error) {
+          this.showMessage(`连接失败: ${error.message}`, 'error');
+          return false;
+        }
+      },
+
+      /**
+       * 更新全局设置
+       * @param {object} settings - 设置对象
+       */
+      updateGlobalSettings(settings) {
+        if (settings.syncInterval) {
+          this.config.syncInterval = settings.syncInterval * 60 * 1000; // 转换为毫秒
+          this.startAutoSync(); // 重启自动同步
+        }
+        
+        if (settings.githubToken !== undefined) {
+          if (settings.githubToken) {
+            localStorage.setItem('github_token', settings.githubToken);
+          } else {
+            localStorage.removeItem('github_token');
+          }
+        }
+        
+        this.saveConfig();
+      },
+
+      /**
+       * 加载仓库列表到界面
+       */
+      loadRepoList() {
+        const repoListEl = document.getElementById('repoList');
+        const emptyListEl = document.getElementById('emptyRepoList');
+        
+        if (this.syncState.repositories.length === 0) {
+          repoListEl.innerHTML = '';
+          emptyListEl.style.display = 'block';
+          return;
+        }
+        
+        emptyListEl.style.display = 'none';
+        
+        repoListEl.innerHTML = this.syncState.repositories.map(repo => `
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+            <div class="flex justify-between items-start mb-2">
+              <div class="flex-1">
+                <h5 class="font-medium text-gray-900 dark:text-white">${repo.owner}/${repo.repo}</h5>
+                <p class="text-sm text-gray-500 dark:text-gray-400">文件夹: ${repo.folderName}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">分支: ${repo.branch || 'main'}</p>
+              </div>
+              <div class="flex items-center space-x-2">
+                <label class="flex items-center">
+                  <input type="checkbox" ${repo.enabled !== false ? 'checked' : ''} 
+                         onchange="GitHubSync.toggleRepository('${repo.id}', this.checked)" 
+                         class="mr-1">
+                  <span class="text-xs">启用</span>
+                </label>
+                <button onclick="GitHubSync.syncSingleRepository('${repo.id}')" 
+                        class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600">
+                  <i class="fa fa-sync"></i>
+                </button>
+                <button onclick="GitHubSync.removeRepository('${repo.id}'); GitHubSync.loadRepoList();" 
+                        class="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </div>
+            </div>
+            ${repo.fileExtensions && repo.fileExtensions.length > 0 ? 
+              `<p class="text-xs text-gray-400">文件类型: ${repo.fileExtensions.join(', ')}</p>` : ''}
+            ${repo.pathPattern ? 
+              `<p class="text-xs text-gray-400">路径模式: ${repo.pathPattern}</p>` : ''}
+          </div>
+        `).join('');
+        
+        // 加载全局设置到界面
+        document.getElementById('syncInterval').value = this.config.syncInterval / 60 / 1000;
+        const token = localStorage.getItem('github_token');
+        if (token) {
+          document.getElementById('githubToken').value = token;
+        }
+      },
+
+      /**
+       * 切换仓库启用状态
+       * @param {string} repoId - 仓库ID
+       * @param {boolean} enabled - 是否启用
+       */
+      toggleRepository(repoId, enabled) {
+        const repo = this.syncState.repositories.find(r => r.id === repoId);
+        if (repo) {
+          repo.enabled = enabled;
+          this.saveConfig();
+        }
+      },
+
+      /**
+       * 同步单个仓库
+       * @param {string} repoId - 仓库ID
+       */
+      async syncSingleRepository(repoId) {
+        const repo = this.syncState.repositories.find(r => r.id === repoId);
+        if (repo) {
+          this.showMessage(`正在同步 ${repo.owner}/${repo.repo}...`, 'info');
+          try {
+            const result = await this.syncRepositoryWithOfflineSupport(repo);
+            if (result.success) {
+              this.showMessage(`${repo.owner}/${repo.repo} 同步成功`, 'success');
+            } else {
+              this.showMessage(`${repo.owner}/${repo.repo} 同步失败`, 'error');
+            }
+          } catch (error) {
+            if (error.message.includes('离线队列')) {
+              this.showMessage(`网络不可用，${repo.owner}/${repo.repo} 已加入离线队列`, 'warning');
+            } else {
+              this.showMessage(`同步失败: ${error.message}`, 'error');
+            }
+          }
+        }
+      },
+
+      /**
+       * 检测网络连接状态
+       * @returns {Promise<boolean>} 网络是否可用
+       */
+      async checkNetworkConnection() {
+        try {
+          // 使用navigator.onLine作为基础检测
+          if (!navigator.onLine) {
+            this.syncState.isOnline = false;
+            this.syncState.lastNetworkCheck = new Date().toISOString();
+            return false;
+          }
+          
+          // 简单设置为在线状态，避免CORS问题
+          this.syncState.isOnline = true;
+          this.syncState.lastNetworkCheck = new Date().toISOString();
+          
+          if (this.syncState.networkRetryCount > 0) {
+            console.log('网络连接已恢复');
+            this.syncState.networkRetryCount = 0;
+            this.showMessage('网络连接已恢复', 'success');
+            
+            // 处理离线队列
+            await this.processOfflineQueue();
+          }
+          
+          return true;
+        } catch (error) {
+          console.warn('网络连接检测失败:', error.message);
+          this.syncState.isOnline = false;
+          this.syncState.networkRetryCount++;
+          return false;
+        }
+      },
+
+      /**
+       * 处理离线队列
+       * @returns {Promise} 处理结果
+       */
+      async processOfflineQueue() {
+        if (this.syncState.offlineQueue.length === 0) {
+          return;
+        }
+        
+        console.log(`处理离线队列中的 ${this.syncState.offlineQueue.length} 个任务`);
+        
+        const queue = [...this.syncState.offlineQueue];
+        this.syncState.offlineQueue = [];
+        
+        for (const task of queue) {
+          try {
+            switch (task.type) {
+              case 'sync_repository':
+                await this.syncRepository(task.repoConfig);
+                break;
+              case 'sync_all':
+                await this.syncAllRepositories();
+                break;
+              case 'test_repository':
+                await this.testRepository(task.repoUrl);
+                break;
+            }
+            
+            console.log(`离线任务执行成功: ${task.type}`);
+          } catch (error) {
+            console.error(`离线任务执行失败: ${task.type}`, error);
+            // 如果仍然失败，重新加入队列
+            this.syncState.offlineQueue.push(task);
+          }
+        }
+      },
+
+      /**
+       * 添加任务到离线队列
+       * @param {object} task - 任务对象
+       */
+      addToOfflineQueue(task) {
+        // 避免重复任务
+        const exists = this.syncState.offlineQueue.some(
+          existing => existing.type === task.type && 
+          JSON.stringify(existing) === JSON.stringify(task)
+        );
+        
+        if (!exists) {
+          this.syncState.offlineQueue.push({
+            ...task,
+            timestamp: new Date().toISOString()
+          });
+          console.log(`任务已添加到离线队列: ${task.type}`);
+        }
+      },
+
+      /**
+       * 监听网络状态变化
+       */
+      setupNetworkListeners() {
+        window.addEventListener('online', () => {
+          console.log('网络连接已恢复');
+          this.syncState.isOnline = true;
+          this.syncState.networkRetryCount = 0;
+          this.showMessage('网络连接已恢复，正在处理离线队列...', 'info');
+          this.processOfflineQueue();
+        });
+        
+        window.addEventListener('offline', () => {
+          console.log('网络连接已断开');
+          this.syncState.isOnline = false;
+          this.showMessage('网络连接已断开，同步任务将在网络恢复后执行', 'warning');
+        });
+      },
+
+      /**
+       * 增强的同步方法，支持离线处理
+       * @param {object} repoConfig - 仓库配置
+       * @returns {Promise} 同步结果
+       */
+      async syncRepositoryWithOfflineSupport(repoConfig) {
+        // 检查网络连接
+        if (!this.syncState.isOnline) {
+          const isOnline = await this.checkNetworkConnection();
+          if (!isOnline) {
+            this.addToOfflineQueue({
+              type: 'sync_repository',
+              repoConfig: repoConfig
+            });
+            throw new Error('网络连接不可用，任务已添加到离线队列');
+          }
+        }
+        
+        try {
+          return await this.syncRepository(repoConfig);
+        } catch (error) {
+          // 如果是网络相关错误，添加到离线队列
+          if (this.isNetworkError(error)) {
+            this.syncState.isOnline = false;
+            this.addToOfflineQueue({
+              type: 'sync_repository',
+              repoConfig: repoConfig
+            });
+          }
+          throw error;
+        }
+      },
+
+      /**
+       * 判断是否为网络错误
+       * @param {Error} error - 错误对象
+       * @returns {boolean} 是否为网络错误
+       */
+      isNetworkError(error) {
+        const networkErrorPatterns = [
+          'fetch',
+          'network',
+          'timeout',
+          'abort',
+          'connection',
+          'ENOTFOUND',
+          'ECONNREFUSED',
+          'ETIMEDOUT'
+        ];
+        
+        const errorMessage = error.message.toLowerCase();
+        return networkErrorPatterns.some(pattern => 
+          errorMessage.includes(pattern.toLowerCase())
+        ) || error.name === 'AbortError' || error.name === 'TypeError';
+      },
+
+      /**
+       * 初始化GitHub同步功能
+       */
+      init() {
+        this.loadConfig();
+        
+        // 设置网络状态监听
+        this.setupNetworkListeners();
+        
+        // 初始网络连接检测
+        this.checkNetworkConnection();
+        
+        // 清理过期的同步历史记录
+        this.cleanupSyncHistory();
+        
+        // 如果有配置的仓库且启用了自动同步，则启动自动同步
+        if (this.syncState.repositories.length > 0) {
+          this.startAutoSync();
+        }
+        
+        console.log('GitHub同步功能已初始化');
+      }
+    };
+
+    // 初始化应用
+    document.addEventListener('DOMContentLoaded', () => {
+      init();
+      GitHubSync.init();
+    });
+  </script>
+
+
+<div id="qihooai-assistant-root"></div><div id="ai-assist-root-bangs"></div></body><div id="shadow-root-ai-zhishiku"></div><div id="ai-assist-root-new"></div></html>
