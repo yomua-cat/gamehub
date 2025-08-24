@@ -45,10 +45,9 @@ jobs:
             版本号: ${{ steps.get_version.outputs.version }}
             ${{ github.event.inputs.release_notes }}
             
-            ---
-            
-            自动发布于 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            ---  
           files: ./木然の摸鱼管理器.html
+          asset_name: 木然の摸鱼管理器.html
           draft: false
           prerelease: false
         env:
