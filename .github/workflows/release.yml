@@ -8,6 +8,10 @@ on:
         required: false
         default: '常规更新'
 
+# 添加权限配置
+permissions:
+  contents: write
+
 jobs:
   create-release:
     runs-on: ubuntu-latest
