@@ -1,0 +1,12 @@
+{
+    gamename:俄罗斯方块|经典版
+    url:https://example.com/tetris|https://example.com/tetris/classic
+        icon:附件文件夹/tetris.ico
+        png:附件文件夹/tetris.png
+}
+{
+    gamename:俄罗斯方块|新版
+    url:https://example.com/tetris/new
+        icon:附件文件夹/tetris.ico
+        png:附件文件夹/tetris.png
+}
