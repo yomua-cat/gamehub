@@ -47,7 +47,7 @@ jobs:
             
             ---  
           files: ./木然の摸鱼管理器.html
-          asset_name: 木然の摸鱼管理器.html
+          name_template: "木然の摸鱼管理器.html"
           draft: false
           prerelease: false
         env:
