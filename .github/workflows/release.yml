@@ -35,7 +35,7 @@ jobs:
 
       - name: 创建Release
         id: create_release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.get_version.outputs.version }}
           name: 木然の摸鱼管理器 ${{ steps.get_version.outputs.version }}
