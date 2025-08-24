@@ -1,0 +1,52 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_title:
+        description: '发布标题'
+        required: true
+        default: '木然の摸鱼管理器更新'
+      release_notes:
+        description: '发布说明'
+        required: true
+        default: '常规更新'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 读取版本号
+        id: get_version
+        run: |
+          VERSION=$(grep -o 'content="V[0-9]\+\.[0-9]\+"' "木然の摸鱼管理器.html" | grep -o 'V[0-9]\+\.[0-9]\+')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "读取到版本号: $VERSION"
+
+      - name: 创建Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          name: ${{ github.event.inputs.release_title }} ${{ steps.get_version.outputs.version }}
+          body: |
+            # ${{ github.event.inputs.release_title }} ${{ steps.get_version.outputs.version }}
+            
+            ${{ github.event.inputs.release_notes }}
+            
+            ---
+            
+            自动发布于 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          files: 木然の摸鱼管理器.html
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 发布结果
+        run: |
+          echo "✅ Release创建成功: ${{ steps.get_version.outputs.version }}"
+          echo "🔗 Release链接: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ steps.get_version.outputs.version }}"
