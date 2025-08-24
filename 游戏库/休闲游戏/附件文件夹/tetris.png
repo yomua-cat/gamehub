@@ -1,0 +1,9 @@
+<!-- 这是一个示例PNG文件（使用SVG格式表示） -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#000033"/>
+  <rect x="440" y="160" width="100" height="100" fill="#FF0000"/>
+  <rect x="540" y="160" width="100" height="100" fill="#FF0000"/>
+  <rect x="540" y="260" width="100" height="100" fill="#FF0000"/>
+  <rect x="640" y="260" width="100" height="100" fill="#FF0000"/>
+  <text x="640" y="500" font-family="Arial" font-size="72" text-anchor="middle" fill="#FFFFFF">俄罗斯方块</text>
+</svg>

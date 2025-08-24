@@ -35,8 +35,8 @@ jobs:
 
       - name: 准备文件
         run: |
-          cp "./木然の摸鱼管理器.html" "./release-file.html"
-          echo "已将文件复制为release-file.html"
+          cp "./木然の摸鱼管理器.html" "./gamehub.html"
+          echo "已将文件复制为gamehub.html"
 
       - name: 创建Release
         id: create_release
@@ -48,7 +48,7 @@ jobs:
             ${{ github.event.inputs.release_notes }}
             
             ---  
-          files: ./release-file.html
+          files: ./gamehub.html
           draft: false
           prerelease: false
         env:

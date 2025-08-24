@@ -1,0 +1,8 @@
+<!-- 这是一个示例PNG文件（使用SVG格式表示） -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#87CEEB"/>
+  <rect x="0" y="500" width="1280" height="220" fill="#8B4513"/>
+  <circle cx="640" cy="200" r="80" fill="#FF0000"/>
+  <rect x="560" y="280" width="160" height="220" fill="#0000FF"/>
+  <text x="640" y="600" font-family="Arial" font-size="72" text-anchor="middle" fill="#FFFFFF">超级玛丽</text>
+</svg>

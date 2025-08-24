@@ -1,0 +1,8 @@
+<!-- 这是一个示例PNG文件（使用SVG格式表示） -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#000033"/>
+  <circle cx="640" cy="300" r="200" fill="#0000FF"/>
+  <circle cx="640" cy="300" r="180" fill="#00008B"/>
+  <polygon points="640,100 740,250 690,400 590,400 540,250" fill="#FFD700"/>
+  <text x="640" y="550" font-family="Arial" font-size="72" text-anchor="middle" fill="#FFFFFF">文明6</text>
+</svg>
