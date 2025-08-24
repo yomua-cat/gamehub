@@ -1225,6 +1225,7 @@
               </div>
             </div>
             <div class="mt-auto">
+              <div class="text-sm text-gray-500 dark:text-gray-400 truncate" title="${item.subtitle || ''}">${item.subtitle || ''}</div>
               <p class="text-sm text-gray-500 dark:text-gray-400 truncate" title="${urlDisplay}">${urlDisplay}</p>
               ${additionalUrls}
             </div>
@@ -2406,6 +2407,7 @@
           
           const config = {
             name: '',
+            subtitle: '', // 添加副标题字段
             alternativeNames: [],
             url: '',
             alternativeUrls: [],
@@ -2437,6 +2439,9 @@
                       config.alternativeNames = gameNames.slice(1); // 次级游戏名
                       addGamehubImportLog(`解析游戏名: ${config.name}${config.alternativeNames.length > 0 ? ` (别名: ${config.alternativeNames.join(', ')})` : ''}`);
                     }
+                    break;
+                  case 'subtitle':
+                    config.subtitle = value;
                     break;
                   case 'url':
                     // 处理 url:链接1|链接2 格式
@@ -2541,6 +2546,7 @@
           const gameFile = {
             id: generateId(),
             name: game.name,
+            subtitle: game.subtitle, // 添加副标题
             type: 'file',
             url: game.url
           };
