@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  secret-scan-html:
+    name: Scan HTML for sensitive info
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Scan HTML for sensitive information
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          # coding: utf-8
+          import os
+          import re
+          import sys
+          import traceback
+
+          def scan_html_for_secrets(root: str = '.'):
+              """
+              扫描项目中的 HTML/HTM 文件，检测潜在敏感信息。
+              - 强规则：命中即失败（例如 GitHub 令牌、私钥标头）。
+              - 弱规则：输出为告警，但不阻断。
+
+              返回: (strong_hits, weak_hits, details)
+              details: List[Tuple[level, name, path, lineno, snippet]]
+              """
+              # 强匹配：GitHub 新式令牌前缀（ghp_/gho_/ghu_/ghs_/ghr_），以及私钥标头
+              strong_patterns = {
+                  'GITHUB_TOKEN': re.compile(r"\bgh(?:p|o|u|s|r)_[A-Za-z0-9_]{20,255}\b"),
+                  'PRIVATE_KEY_HEADER': re.compile(r"-----BEGIN (?:RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----")
+              }
+
+              # 弱匹配：常见可疑关键词（容易误报，不作为失败依据）
+              weak_patterns = {
+                  'PASSWORD_LIKE': re.compile(r"password\s*[:=]", re.IGNORECASE),
+                  'API_KEY_LIKE': re.compile(r"api[_-]?key\s*[:=]", re.IGNORECASE),
+                  'TOKEN_LIKE': re.compile(r"token\s*[:=]", re.IGNORECASE),
+                  'SECRET_LIKE': re.compile(r"secret\s*[:=]", re.IGNORECASE)
+              }
+
+              strong_hits = 0
+              weak_hits = 0
+              details = []
+
+              for dirpath, _, filenames in os.walk(root):
+                  for fn in filenames:
+                      if not fn.lower().endswith((".html", ".htm")):
+                          continue
+                      filepath = os.path.join(dirpath, fn)
+
+                      try:
+                          with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+                              lines = f.readlines()
+                      except Exception as e:
+                          print(f"[错误] 无法读取文件: {filepath}: {e}")
+                          continue
+
+                      for i, line in enumerate(lines, start=1):
+                          # 强匹配
+                          for name, pat in strong_patterns.items():
+                              for _ in pat.finditer(line):
+                                  strong_hits += 1
+                                  details.append(("强", name, filepath, i, line.strip()))
+
+                          # 弱匹配
+                          for name, pat in weak_patterns.items():
+                              for _ in pat.finditer(line):
+                                  weak_hits += 1
+                                  details.append(("弱", name, filepath, i, line.strip()))
+
+              return strong_hits, weak_hits, details
+
+          if __name__ == '__main__':
+              try:
+                  print('开始扫描 HTML 敏感信息...')
+                  strong, weak, items = scan_html_for_secrets('.')
+
+                  for level, name, path, lineno, snippet in items:
+                      print(f"[{level}] {name} {path}:{lineno} => {snippet}")
+
+                  print(f"扫描完成。强匹配: {strong} 弱匹配: {weak}")
+
+                  if strong > 0:
+                      print('检测到强匹配敏感信息，CI 失败以防止泄露。', file=sys.stderr)
+                      sys.exit(1)
+
+                  print('未检测到强匹配敏感信息。')
+                  sys.exit(0)
+
+              except Exception:
+                  print('扫描过程中发生异常，CI 失败。', file=sys.stderr)
+                  traceback.print_exc()
+                  sys.exit(2)
+          PY

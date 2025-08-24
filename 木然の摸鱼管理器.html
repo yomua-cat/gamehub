@@ -2,10 +2,8 @@
 <html lang="zh-CN"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>flysheep资源避难所-咩咩の摸鱼管理器</title>
-  <!-- 内联 SVG favicon（云图标），与主题切换图标无关 -->
+  <title>flysheep资源避难所-木然の摸鱼管理器</title>
   <link rel="icon" type="image/svg+xml" sizes="any" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='%233B82F6'%3E%3Ccircle cx='24' cy='34' r='10'/%3E%3Ccircle cx='34' cy='30' r='12'/%3E%3Ccircle cx='44' cy='35' r='9'/%3E%3Crect x='18' y='34' width='32' height='12' rx='6' ry='6'/%3E%3C/g%3E%3C/svg%3E" />
-  <!-- 使用国内CDN资源 -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
   
@@ -205,7 +203,7 @@
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-2">
         <i class="fa fa-cloud text-primary text-2xl"></i>
-        <h1 class="text-xl font-bold">flysheep资源避难所-咩咩の摸鱼管理器</h1>
+        <h1 class="text-xl font-bold">flysheep资源避难所-木然の摸鱼管理器</h1>
       </div>
       
       <div class="flex items-center space-x-4">
@@ -293,7 +291,7 @@
             <div class="flex justify-between items-start mb-2">
               <div class="flex items-center space-x-2">
                 <i class="fa fa-folder text-yellow-500 text-xl"></i>
-                <span class="font-medium truncate max-w-[120px]">咩咩测试</span>
+                <span class="font-medium truncate max-w-[120px]">木然测试</span>
               </div>
               <div class="item-actions opacity-0 group-hover:opacity-100 transition-opacity">
                 <button class="edit-btn p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded" data-id="meo6l27tstlfv" data-type="folder">
@@ -368,7 +366,7 @@
   <!-- 页脚 -->
   <footer class="bg-white dark:bg-gray-800 py-4 border-t border-gray-200 dark:border-gray-700">
     <div class="container mx-auto px-4 text-center text-sm text-gray-500 dark:text-gray-400">
-      <p>咩咩的摸鱼管理器 © 2025</p>
+      <p>木然的摸鱼管理器 © 2025</p>
     </div>
   </footer>
 
@@ -929,20 +927,7 @@
         showThemeChangeNotification(isDark);
       }, 100);
     }
-    
-    // 显示主题切换通知
-    function showThemeChangeNotification(isDark) {
-      const notification = document.createElement('div');
-      notification.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg transform transition-all duration-300 ${
-        isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'
-      } border ${isDark ? 'border-gray-700' : 'border-gray-200'}`;
-      notification.innerHTML = `
-        <div class="flex items-center space-x-2">
-          <i class="fa ${isDark ? 'fa-moon' : 'fa-sun'} text-${isDark ? 'blue' : 'yellow'}-500"></i>
-          <span>已切换到${isDark ? '深色' : '浅色'}模式</span>
-        </div>
-      `;
-      
+          
       document.body.appendChild(notification);
       
       // 显示动画
@@ -961,7 +946,7 @@
           }
         }, 300);
       }, 3000);
-    }
+
     
     // 渲染当前目录内容
     function renderContent() {
