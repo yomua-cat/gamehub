@@ -1,34 +1,48 @@
 <!DOCTYPE html>
+<!-- 文档类型声明，指定为HTML5 -->
 <html lang="zh-CN"><head>
+  <!-- 设置文档字符编码为UTF-8 -->
   <meta charset="UTF-8">
+  <!-- 设置视口，使网页在移动设备上正确显示 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 网页标题 -->
   <title>flysheep资源避难所-木然の摸鱼管理器</title>
+  <!-- 网站图标，使用内联SVG数据URI -->
   <link rel="icon" type="image/svg+xml" sizes="any" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='%233B82F6'%3E%3Ccircle cx='24' cy='34' r='10'/%3E%3Ccircle cx='34' cy='30' r='12'/%3E%3Ccircle cx='44' cy='35' r='9'/%3E%3Crect x='18' y='34' width='32' height='12' rx='6' ry='6'/%3E%3C/g%3E%3C/svg%3E" />
+  <!-- 引入Tailwind CSS框架 -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 引入Font Awesome图标库 -->
   <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
   
-  <!-- 配置Tailwind自定义颜色和字体 -->
   <script>
+    /* Tailwind CSS配置 */
     tailwind.config = {
+      // 启用暗黑模式，使用class类名控制
       darkMode: 'class',
       theme: {
         extend: {
+          // 扩展颜色配置
           colors: {
-            primary: '#3B82F6',
-            secondary: '#10B981',
-            light: '#F8FAFC',
-            dragOver: '#93C5FD' // 拖拽悬停颜色
+            primary: '#3B82F6',    // 主要颜色（蓝色）
+            secondary: '#10B981',  // 次要颜色（绿色）
+            light: '#F8FAFC',      // 浅色背景
+            dragOver: '#93C5FD'    // 拖拽悬停颜色
           },
+          // 扩展字体配置
           fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],  // 无衬线字体
           },
         },
       }
     }
     
-    // 全局通知函数
+    /**
+     * 显示通知消息
+     * @param {string} message - 通知消息内容
+     * @param {string} type - 通知类型：'success'、'error'、'warning'或'info'
+     */
     window.showNotification = function(message, type = 'info') {
-      // 创建通知容器（如果不存在）
+      // 获取或创建通知容器
       let notificationContainer = document.getElementById('notification-container');
       if (!notificationContainer) {
         notificationContainer = document.createElement('div');
@@ -37,30 +51,35 @@
         document.body.appendChild(notificationContainer);
       }
       
+      // 创建通知元素
       const notification = document.createElement('div');
       notification.className = 'notification';
       notification.textContent = message;
       notification.style.cssText = 'padding: 12px 24px; margin-bottom: 8px; border-radius: 4px; color: white; font-size: 14px; opacity: 0; transform: translateX(100%); transition: all 0.3s ease; pointer-events: auto; min-width: 200px; text-align: center;';
       
-      // 设置通知样式
+      // 根据通知类型设置不同的背景颜色
       const colors = {
-        success: '#10b981',
-        error: '#ef4444',
-        warning: '#f59e0b',
-        info: '#3b82f6'
+        success: '#10b981',  // 绿色
+        error: '#ef4444',    // 红色
+        warning: '#f59e0b',  // 黄色
+        info: '#3b82f6'      // 蓝色
       };
       notification.style.backgroundColor = colors[type] || colors.info;
       
+      // 添加通知到容器
       notificationContainer.appendChild(notification);
       
+      // 显示通知（淡入效果）
       setTimeout(() => {
         notification.style.opacity = '1';
         notification.style.transform = 'translateX(0)';
       }, 100);
       
+      // 3秒后自动隐藏通知（淡出效果）
       setTimeout(() => {
         notification.style.opacity = '0';
         notification.style.transform = 'translateX(100%)';
+        // 动画完成后移除通知元素
         setTimeout(() => {
           if (notification.parentNode) {
             notification.parentNode.removeChild(notification);
@@ -71,41 +90,46 @@
   </script>
   
   <style>
-    /* 全局样式 */
+    /* 自定义CSS样式 */
     
+    /* 提高内容渲染性能 */
     .content-auto {
       content-visibility: auto;
     }
     
-
-    
+    /* 文件夹悬停效果 */
     .folder-hover {
-  transition: inherit;
-}
-    .folder-hover:hover {
-      transform: translateY(-0.25rem);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      transition: inherit;
     }
-    .file-hover {
-  transition: inherit;
-}
-    .file-hover:hover {
-      background-color: rgb(239 246 255);
+    .folder-hover:hover {
+      transform: translateY(-0.25rem); /* 上移效果 */
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); /* 悬停阴影 */
     }
     
-    .dragging {
-      opacity: 0.5;
-      transform: scale(0.95);
-      border-style: dashed;
-      border-color: rgb(59 130 246);
+    /* 文件悬停效果 */
+    .file-hover {
+      transition: inherit;
     }
+    .file-hover:hover {
+      background-color: rgb(239 246 255); /* 浅蓝色背景 */
+    }
+    
+    /* 拖拽中的元素样式 */
+    .dragging {
+      opacity: 0.5; /* 半透明 */
+      transform: scale(0.95); /* 缩小效果 */
+      border-style: dashed; /* 虚线边框 */
+      border-color: rgb(59 130 246); /* 蓝色边框 */
+    }
+    
+    /* 拖拽目标悬停样式 */
     .drag-over {
-      border-color: rgb(59 130 246);
-      background-color: rgba(59, 130, 246, 0.2);
+      border-color: rgb(59 130 246); /* 蓝色边框 */
+      background-color: rgba(59, 130, 246, 0.2); /* 浅蓝色背景 */
     }
     
   </style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, system-ui, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width: 640px){.container{max-width:640px}}@media (min-width: 768px){.container{max-width:768px}}@media (min-width: 1024px){.container{max-width:1024px}}@media (min-width: 1280px){.container{max-width:1280px}}@media (min-width: 1536px){.container{max-width:1536px}}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.left-3{left:0.75rem}.top-0{top:0px}.top-1\/2{top:50%}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mx-2{margin-left:0.5rem;margin-right:0.5rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mt-4{margin-top:1rem}.mt-auto{margin-top:auto}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-16{height:4rem}.h-2\.5{height:0.625rem}.h-full{height:100%}.min-h-screen{min-height:100vh}.w-16{width:4rem}.w-full{width:100%}.max-w-md{max-width:28rem}.max-w-\[120px\]{max-width:120px}.flex-1{flex:1 1 0%}.-translate-y-1\/2{--tw-translate-y:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.rounded{border-radius:0.25rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.bg-black\/50{background-color:rgb(0 0 0 / 0.5)}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-green-100{--tw-bg-opacity:1;background-color:rgb(220 252 231 / var(--tw-bg-opacity, 1))}.bg-green-600{--tw-bg-opacity:1;background-color:rgb(22 163 74 / var(--tw-bg-opacity, 1))}.bg-primary{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-purple-600{--tw-bg-opacity:1;background-color:rgb(147 51 234 / var(--tw-bg-opacity, 1))}.bg-red-100{--tw-bg-opacity:1;background-color:rgb(254 226 226 / var(--tw-bg-opacity, 1))}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.bg-secondary{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.p-2{padding:0.5rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-1{padding:0.25rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pl-10{padding-left:2.5rem}.pr-4{padding-right:1rem}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-6xl{font-size:3.75rem;line-height:1}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94 / var(--tw-text-opacity, 1))}.text-primary{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-500{--tw-text-opacity:1;color:rgb(234 179 8 / var(--tw-text-opacity, 1))}.opacity-0{opacity:0}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.folder-hover{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:300ms}.folder-hover:hover{--tw-translate-y:-0.25rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.file-hover{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:200ms}.file-hover:hover{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, system-ui, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width: 640px){.container{max-width:640px}}@media (min-width: 768px){.container{max-width:768px}}@media (min-width: 1024px){.container{max-width:1024px}}@media (min-width: 1280px){.container{max-width:1280px}}@media (min-width: 1536px){.container{max-width:1536px}}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.left-3{left:0.75rem}.top-0{top:0px}.top-1\/2{top:50%}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mx-2{margin-left:0.5rem;margin-right:0.5rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mt-4{margin-top:1rem}.mt-auto{margin-top:auto}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-16{height:4rem}.h-2\.5{height:0.625rem}.h-full{height:100%}.min-h-screen{min-height:100vh}.w-16{width:4rem}.w-full{width:100%}.max-w-md{max-width:28rem}.max-w-\[120px\]{max-width:120px}.flex-1{flex:1 1 0%}.-translate-y-1\/2{--tw-translate-y:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.rounded{border-radius:0.25rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.bg-black\/50{background-color:rgb(0 0 0 / 0.5)}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-green-100{--tw-bg-opacity:1;background-color:rgb(220 252 231 / var(--tw-bg-opacity, 1))}.bg-green-600{--tw-bg-opacity:1;background-color:rgb(22 163 74 / var(--tw-bg-opacity, 1))}.bg-primary{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-purple-600{--tw-bg-opacity:1;background-color:rgb(147 51 234 / var(--tw-bg-opacity, 1))}.bg-red-100{--tw-bg-opacity:1;background-color:rgb(254 226 226 / var(--tw-bg-opacity, 1))}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.bg-secondary{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.p-2{padding:0.5rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-1{padding:0.25rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pl-10{padding-left:2.5rem}.pr-4{padding-right:1rem}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-6xl{font-size:3.75rem;line-height:1}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94 / var(--tw-text-opacity, 1))}.text-primary{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-500{--tw-text-opacity:1;color:rgb(234 179 8 / var(--tw-text-opacity, 1))}.opacity-0{opacity:0}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.folder-hover{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:300ms}.folder-hover:hover{--tw-translate-y:-0.25rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.file-hover{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:200ms}.file-hover:hover{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}
     .hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}
     .hover\:bg-gray-200:hover{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}
     .hover\:bg-gray-300:hover{--tw-bg-opacity:1;background-color:rgb(209 213 219 / var(--tw-bg-opacity, 1))}
@@ -217,10 +241,10 @@
 }
 </style></head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen flex flex-col">
-  <!-- 数据存储区 - 所有数据将保存在这里 -->
+
   <div id="dataStorage" style="display: none;">{"id":"root","name":"首页","type":"folder","children":[{"id":"meo6l27tstlfv","name":"咩咩测试","type":"folder","children":[{"id":"meo6m0le58oig","name":"The Rogue Prince of Persia","type":"file","url":"https://pan.quark.cn/s/a956e5c43806"},{"id":"meo6m0lef3mcm","name":"Sword of the Sea","type":"file","url":"https://pan.quark.cn/s/926368c4829d"},{"id":"meo6m0le83o48","name":"Dice Gambit","type":"file","url":"https://pan.quark.cn/s/15cbdf61e401"},{"id":"meo6m0le3lc8p","name":"Chained Together","type":"file","url":"https://pan.quark.cn/s/ad63bf20eabb"},{"id":"meo6m0lem1zlx","name":"Kingdoms and Castles","type":"file","url":"https://pan.quark.cn/s/39b6cc3db8ec"},{"id":"meo6m0lepvhq8","name":"Is This Seat Taken","type":"file","url":"https://pan.quark.cn/s/baca8bcdc6cb"},{"id":"meo6m0le4w0nw","name":"Stoneshard.v0.9.3.5","type":"file","url":"https://pan.quark.cn/s/7b629bcfd5ac"},{"id":"meo6m0leev5p1","name":"Village Tale","type":"file","url":"https://pan.quark.cn/s/8e3868cd1d01"},{"id":"meo6m0leidrso","name":"OVIS LOOP","type":"file","url":"https://pan.quark.cn/s/fc50b2494089"},{"id":"meo6m0le683ix","name":"Warhammer 40000 Dawn of War","type":"file","url":"https://pan.quark.cn/s/61954ba230b1"},{"id":"meo6m0leay4ow","name":"Frosthaven","type":"file","url":"https://pan.quark.cn/s/dc20620b2596"},{"id":"meo6m0leot6or","name":"The RPG","type":"file","url":"https://pan.quark.cn/s/e35d962e59d0"},{"id":"meo6m0lehu61s","name":"Call of Duty Modern Warfare 3","type":"file","url":"https://pan.quark.cn/s/432074312ae1"},{"id":"meo6m0le6z9b2","name":"Dino Topia","type":"file","url":"https://pan.quark.cn/s/4016a95f05a5"},{"id":"meo6m0lewqzih","name":"The Scouring","type":"file","url":"https://pan.quark.cn/s/e46fb857477d"},{"id":"meo6m0ledtltp","name":"Witchfire","type":"file","url":"https://pan.quark.cn/s/5fb7baaaac51"},{"id":"meo6m0lecwrs4","name":"Abyssus","type":"file","url":"https://pan.quark.cn/s/7a56b44ce5d2"},{"id":"meo6m0leil23j","name":"The Elder Scrolls IV Oblivion Remastered","type":"file","url":"https://pan.quark.cn/s/1ecde5ee50d8"},{"id":"meo6m0le1ks25","name":"THE HOUSE OF THE DEAD 2 Remake","type":"file","url":"https://pan.quark.cn/s/e8477dc77747"},{"id":"meo6m0leaj7au","name":"Artis Impact","type":"file","url":"https://pan.quark.cn/s/772e94240df1"},{"id":"meo6m0leu3954","name":"Tiny Bookshop","type":"file","url":"https://pan.quark.cn/s/89b8387356c0"},{"id":"meo6m0lenamt3","name":"Tower of Babel","type":"file","url":"https://pan.quark.cn/s/eafe1a27bac7"},{"id":"meo6m0lezuzn6","name":"Mandragora","type":"file","url":"https://pan.quark.cn/s/f28adc7aeb11"},{"id":"meo6m0lejibgk","name":"Fuel Harvest Together","type":"file","url":"https://pan.quark.cn/s/3bde216f980c"},{"id":"meo6m0lem889p","name":"Fate hollow ataraxia REMASTERED","type":"file","url":"https://pan.quark.cn/s/8215a309aab6"},{"id":"meo6m0led26iq","name":"Gatekeeper","type":"file","url":"https://pan.quark.cn/s/885efd6c567c"},{"id":"meo6m0legzwnz","name":"smzh Black Ops 6","type":"file","url":"https://pan.quark.cn/s/3f0b3752fc62"},{"id":"meo6m0legsgkm","name":"SWAT Commander","type":"file","url":"https://pan.quark.cn/s/dd601f8a8f1e"},{"id":"meo6m0lespmvu","name":"Keep on Mining","type":"file","url":"https://pan.quark.cn/s/c88782424b73"},{"id":"meo6m0lexalxb","name":"Titan Quest II","type":"file","url":"https://pan.quark.cn/s/0377ce606bad"},{"id":"meo6m0lei35n5","name":"Lakeside Bar","type":"file","url":"https://pan.quark.cn/s/c2bb6558aa1b"},{"id":"meo6m0lenirp3","name":"hololive Holos","type":"file","url":"https://pan.quark.cn/s/1a8b779d1b53"},{"id":"meo6m0lebqlu6","name":"Another Farm Roguelike Rebirth","type":"file","url":"https://pan.quark.cn/s/681565bd9395"},{"id":"meo6m0lete7rq","name":"Dragon Ball Z Kakarot v2.2","type":"file","url":"https://pan.quark.cn/s/4f974ea623d1"},{"id":"meo6m0lej18cm","name":"Earthion","type":"file","url":"https://pan.quark.cn/s/ab69a5bd476c"},{"id":"meo6m0leg94hb","name":"NINJA GAIDEN Ragebound","type":"file","url":"https://pan.quark.cn/s/94e2d7ec1a39"},{"id":"meo6m0lejtj7h","name":"Achilles Survivor","type":"file","url":"https://pan.quark.cn/s/961349854019"},{"id":"meo6m0le1xng0","name":"Tales of the Shire","type":"file","url":"https://pan.quark.cn/s/ae672b90cd9f"},{"id":"meo6m0leev41d","name":"Grounded2","type":"file","url":"https://pan.quark.cn/s/3f590bb93b30"},{"id":"meo6m0le1met9","name":"RoboCop Rogue City","type":"file","url":"https://pan.quark.cn/s/d17d3689f80a"},{"id":"meo6m0levqym7","name":"Prison Escape Simulator Dig Out","type":"file","url":"https://pan.quark.cn/s/4652d6b0c0d1"},{"id":"meo6m0le39ajn","name":"UnderMine2","type":"file","url":"https://pan.quark.cn/s/aef97af7ebf1"},{"id":"meo6m0lertda6","name":"NoSleepForKanameDate","type":"file","url":"https://pan.quark.cn/s/63e802fa29c6"},{"id":"meo6m0le21k6a","name":"smzhModernWarfare2019","type":"file","url":"https://pan.quark.cn/s/5b9904624ce6"},{"id":"meo6m0le115l2","name":"Killing Floor 3","type":"file","url":"https://pan.quark.cn/s/f6da7cdceda3"},{"id":"meo6m0lemy270","name":"The Great Villainess Strategy Of Lily","type":"file","url":"https://pan.quark.cn/s/df324298c54f"},{"id":"meo6m0lea5361","name":"Monument Valley 3","type":"file","url":"https://pan.quark.cn/s/8725cdb4dd0f"},{"id":"meo6m0ledxgop","name":"Hell Clock","type":"file","url":"https://pan.quark.cn/s/5543949ffdc8"},{"id":"meo6m0lec6xzi","name":"Forts","type":"file","url":"https://pan.quark.cn/s/b673e044c9bf"},{"id":"meo6m0lelvj6p","name":"Abiotic Factor","type":"file","url":"https://pan.quark.cn/s/55e2236f471e"},{"id":"meo6m0le4f56l","name":"The King is Watching","type":"file","url":"https://pan.quark.cn/s/c6290e2f0a36"},{"id":"meo6m0leh92w1","name":"Mahou Shoujo no Majo Shiken","type":"file","url":"https://pan.quark.cn/s/265f27867b90"},{"id":"meo6m0lek2psl","name":"Whos at the door","type":"file","url":"https://pan.quark.cn/s/1321cf919603"},{"id":"meo6m0le3oskh","name":"Dead Cells v35.8a","type":"file","url":"https://pan.quark.cn/s/3d2a71458cac"},{"id":"meo6m0lejx1f4","name":"Sofia in Exchange for Lies","type":"file","url":"https://pan.quark.cn/s/47ef6a1b6692"},{"id":"meo6m0lejx6xy","name":"Cyberpunk 2077 v.2.3","type":"file","url":"https://pan.quark.cn/s/102c44f93dcf"},{"id":"meo6m0le0enom","name":"Drill Core","type":"file","url":"https://pan.quark.cn/s/4f6947da4bdf"},{"id":"meo6m0le2xwy5","name":"Back to the Dawn","type":"file","url":"https://pan.quark.cn/s/0dd5ad3d22fc"},{"id":"meo6m0les0u27","name":"Eriksholm The Stolen Dream","type":"file","url":"https://pan.quark.cn/s/66021be1007c"},{"id":"meo6m0le3qv83","name":"Rail Route","type":"file","url":"https://pan.quark.cn/s/53245c6dd952"},{"id":"meo6m0les5yjr","name":"Content Warning","type":"file","url":"https://pan.quark.cn/s/88d6229257e9"},{"id":"meo6m0leegq3h","name":"HUNTER HUNTER NEN IMPACT","type":"file","url":"https://pan.quark.cn/s/e4253f2e1cbf"},{"id":"meo6m0lf3wfpf","name":"Diablo 2","type":"file","url":"https://pan.quark.cn/s/74b7f966ab84"},{"id":"meo6m0lfpwh56","name":"DYSMANTLE v1.4.1.2a","type":"file","url":"https://pan.quark.cn/s/d55622df8981"},{"id":"meo6m0lfskzfd","name":"Kunitsu Gami Path of the Goddess","type":"file","url":"https://pan.quark.cn/s/178ca87351f9"},{"id":"meo6m0lfca7mm","name":"Katana ZERO","type":"file","url":"https://pan.quark.cn/s/a052e8d5ab73"},{"id":"meo6m0lfv4yt0","name":"Mycopunk","type":"file","url":"https://pan.quark.cn/s/0f4e56105cdc"},{"id":"meo6m0lftcvhx","name":"Astro.Prospector.v1.0.0.6","type":"file","url":"https://pan.quark.cn/s/94b82f625425"},{"id":"meo6m0lfg2i9i","name":"EDENS ZERO","type":"file","url":"https://pan.quark.cn/s/31078ad13bcd"},{"id":"meo6m0lfafnfv","name":"zwdzjs v3.81","type":"file","url":"https://pan.quark.cn/s/6b3cb162a17c"},{"id":"meo6m0lf37t24","name":"PATAPON 1+2 REPLAY","type":"file","url":"https://pan.quark.cn/s/7c5b2763926a"},{"id":"meo6m0lfeis77","name":"Tony Hawks Pro Skater 3 4","type":"file","url":"https://pan.quark.cn/s/7f9d8c0bfc6b"},{"id":"meo6m0lfqdpgr","name":"Cauldron","type":"file","url":"https://pan.quark.cn/s/44165c5f8ec4"},{"id":"meo6m0lfdaatu","name":"Heretical","type":"file","url":"https://pan.quark.cn/s/23cf177d6e39"},{"id":"meo6m0lfgcn65","name":"Circle Empires","type":"file","url":"https://pan.quark.cn/s/fa184a7fbdf5"},{"id":"meo6m0lfhm9oz","name":"Stellaris","type":"file","url":"https://pan.quark.cn/s/9b9d9521a13c"},{"id":"meo6m0lfwaoji","name":"WARRIORS Abyss","type":"file","url":"https://pan.quark.cn/s/5ccb95dbcacd"},{"id":"meo6m0lfqf62d","name":"DayZ","type":"file","url":"https://pan.quark.cn/s/dbc9014ea5fd"},{"id":"meo6m0lfy5jes","name":"Sky Force Reloaded","type":"file","url":"https://pan.quark.cn/s/82591ed94439"},{"id":"meo6m0lf2o8p5","name":"Date Everything","type":"file","url":"https://pan.quark.cn/s/16a2695e57bb"},{"id":"meo6m0lf5e2qn","name":"inZOI","type":"file","url":"https://pan.quark.cn/s/e0bf427f8882"},{"id":"meo6m0lfgfsf3","name":"Click and Conquer","type":"file","url":"https://pan.quark.cn/s/5c591baf14ff"},{"id":"meo6m0lfe51fi","name":"Motor Town Behind The Wheel","type":"file","url":"https://pan.quark.cn/s/1a9fa3d7170e"},{"id":"meo6m0lfiyt1e","name":"Lunar Eclipse","type":"file","url":"https://pan.quark.cn/s/cb7b877b9b9b"},{"id":"meo6m0lfg84dx","name":"Tinkerlands","type":"file","url":"https://pan.quark.cn/s/ff3f7ff9808f"},{"id":"meo6m0lfmur94","name":"Europa Universalis IV v1.375","type":"file","url":"https://pan.quark.cn/s/f02c704ee739"},{"id":"meo6m0lfnr9mv","name":"Diablo1","type":"file","url":"https://pan.quark.cn/s/472e6e12882b"},{"id":"meo6m0lfoanct","name":"NOBUNAGAS AMBITION Awakening Power Up Kit","type":"file","url":"https://pan.quark.cn/s/0b0851eeade0"},{"id":"meo6m0lfnsr9v","name":"Suit4Hire","type":"file","url":"https://pan.quark.cn/s/997ddcf642e1"},{"id":"meo6m0lfs9men","name":"Super Luckys Tale","type":"file","url":"https://pan.quark.cn/s/cd8983d1d435"},{"id":"meo6m0lfev7gx","name":"Rift of the NecroDancer","type":"file","url":"https://pan.quark.cn/s/336a394326df"},{"id":"meo6m0lf3auro","name":"Dolls Nest","type":"file","url":"https://pan.quark.cn/s/2fad9599a377"},{"id":"meo6m0lfw71qj","name":"PEAK","type":"file","url":"https://pan.quark.cn/s/dc26ef5cd892"},{"id":"meo6m0lf05qvl","name":"请别影响我成仙","type":"file","url":"https://pan.quark.cn/s/64e4c8f2c05d"},{"id":"meo6m0lf3sxd5","name":"Rhythm Doctor","type":"file","url":"https://pan.quark.cn/s/7ebc4e2ee38b"},{"id":"meo6m0lfxme2g","name":"Victoria3","type":"file","url":"https://pan.quark.cn/s/d6f7d18db0ed"},{"id":"meo6m0lf3bwjh","name":"Crime Simulator","type":"file","url":"https://pan.quark.cn/s/b37d55a42598"},{"id":"meo6m0lfc2pls","name":"ToHeart","type":"file","url":"https://pan.quark.cn/s/dd2b5fd539c5"},{"id":"meo6m0lf2svjp","name":"Palworld v0.6.07","type":"file","url":"https://pan.quark.cn/s/259dcfc8ffd3"},{"id":"meo6m0lfjjsdw","name":"Crashlands 2","type":"file","url":"https://pan.quark.cn/s/9847b6f33844"}]},{"id":"meo71j17s94n1","name":"v0.1版 稍微能用","type":"folder","children":[]}],"darkMode":true}</div>
 
-  <!-- 顶部导航栏 -->
+
   <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-2">
@@ -251,12 +275,12 @@
     </div>
   </header>
 
-  <!-- 路径导航 -->
+
   <div id="pathNavigation" class="bg-gray-100 dark:bg-gray-800 py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm"><span class="cursor-pointer hover:text-primary text-primary font-medium" data-id="root">首页</span></div>
 
-  <!-- 主内容区 -->
+
   <main class="flex-1 container mx-auto px-4 py-6">
-    <!-- 操作按钮区 -->
+
     <div class="mb-6 flex flex-wrap gap-3">
       <button id="addFolderBtn" class="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors">
         <i class="fa fa-folder"></i>
@@ -266,14 +290,14 @@
         <i class="fa fa-file"></i>
         <span>添加文件</span>
       </button>
-      <!-- GitHub同步功能已移除 -->
+
       <button id="refreshBtn" class="flex items-center space-x-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 px-4 py-2 rounded-lg transition-all duration-300 ease-in-out">
         <i class="fa fa-refresh transition-all duration-300 ease-in-out"></i>
         <span class="transition-all duration-300 ease-in-out">刷新</span>
       </button>
     </div>
 
-    <!-- 搜索框 -->
+
     <div class="mb-6">
       <div class="relative">
         <input type="text" id="searchInput" placeholder="搜索文件夹或链接..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/50">
@@ -281,9 +305,9 @@
       </div>
     </div>
 
-    <!-- 内容展示区的前置空间 -->
 
-    <!-- 内容展示区 -->
+
+
     <div id="contentContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"><div data-id="meo6l27tstlfv" data-type="folder" class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700 folder-hover cursor-pointer flex flex-col h-full group">
             <div class="flex justify-between items-start mb-2">
               <div class="flex items-center space-x-2">
@@ -318,7 +342,7 @@
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-auto">0 个项目</p>
           </div></div>
 
-    <!-- 空状态提示 -->
+
     <div id="emptyState" class="flex flex-col items-center justify-center py-16 text-center hidden">
       <i class="fa fa-folder-open text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
       <h3 class="text-xl font-medium mb-2">当前目录为空</h3>
@@ -326,7 +350,7 @@
     </div>
   </main>
 
-  <!-- 导入进度模态框 -->
+
   <div id="importProgressModal" class="modal fixed inset-0 bg-black/50 z-50 items-center justify-center p-4 hidden">
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 transform transition-all">
       <div class="text-center">
@@ -342,7 +366,7 @@
     </div>
   </div>
 
-  <!-- 导入结果模态框 -->
+
   <div id="importResultModal" class="modal fixed inset-0 bg-black/50 z-50 items-center justify-center p-4 hidden">
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 transform transition-all">
       <div class="text-center">
@@ -360,14 +384,14 @@
     </div>
   </div>
 
-  <!-- 页脚 -->
+
   <footer class="bg-white dark:bg-gray-800 py-4 border-t border-gray-200 dark:border-gray-700">
     <div class="container mx-auto px-4 text-center text-sm text-gray-500 dark:text-gray-400">
       <p>木然的摸鱼管理器 © 2025</p>
     </div>
   </footer>
 
-  <!-- 新建文件夹模态框 -->
+
   <div id="folderModal" class="modal fixed inset-0 bg-black/50 z-50 items-center justify-center p-4 hidden">
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 transform transition-all">
       <div class="flex justify-between items-center mb-4">
@@ -393,7 +417,7 @@
     </div>
   </div>
 
-  <!-- 添加链接模态框 -->
+
   <div id="fileModal" class="modal fixed inset-0 bg-black/50 z-50 items-center justify-center p-4 hidden">
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 transform transition-all">
       <div class="flex justify-between items-center mb-4">
@@ -423,7 +447,7 @@
     </div>
   </div>
 
-  <!-- 编辑模态框 -->
+
   <div id="editModal" class="modal fixed inset-0 bg-black/50 z-50 items-center justify-center p-4 hidden">
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 transform transition-all">
       <div class="flex justify-between items-center mb-4">
@@ -458,7 +482,6 @@
     </div>
   </div>
 
-  <!-- 删除确认模态框 -->
   <div id="deleteModal" class="modal fixed inset-0 bg-black/50 z-50 items-center justify-center p-4 hidden">
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 transform transition-all">
       <div class="text-center mb-6">
@@ -479,45 +502,36 @@
     </div>
   </div>
 
-  <!-- 模态框区域结束 -->
-
   <script>
-    // 数据结构和变量
     let fileSystem = null;
     let currentFolder = null;
     let deleteItem = null;
     let draggedItem = null;
     
-    // 初始化
-    /**
-     * 初始化应用
-     * 加载数据、设置主题和事件监听器
-     */
     function init() {
-      // 初始化主题过渡样式
       applyThemeTransitionStyles();
-      
-      // 从页面内的存储区加载数据
       loadDataFromHtml();
-      
-      // 检查深色模式偏好
       checkDarkMode();
-      
       renderContent();
       setupEventListeners();
     }
     
-    // 从HTML存储区加载数据
+    /**
+     * 从HTML元素中加载文件系统数据
+     * 从页面中的隐藏元素读取JSON数据并解析为文件系统对象
+     * 如果数据无效或解析失败，则创建默认的根文件夹结构
+     */
     function loadDataFromHtml() {
       try {
+        // 获取存储数据的DOM元素
         const storageElement = document.getElementById('dataStorage');
+        // 解析JSON数据
         const data = JSON.parse(storageElement.textContent.trim());
-        
-        // 确保数据结构完整
+        // 验证数据有效性
         if (data && data.id === 'root' && data.type === 'folder') {
           fileSystem = data;
         } else {
-          // 数据结构不正确，使用默认数据
+          // 创建默认文件系统结构
           fileSystem = {
             id: 'root',
             name: '首页',
@@ -526,10 +540,11 @@
             darkMode: false
           };
         }
-        
+        // 设置当前文件夹为根文件夹
         currentFolder = fileSystem;
       } catch (e) {
         console.error('加载数据失败，使用默认数据', e);
+        // 出错时创建默认文件系统结构
         fileSystem = {
           id: 'root',
           name: '首页',
@@ -541,11 +556,15 @@
       }
     }
     
-    // 保存数据到HTML存储区
+    /**
+     * 将文件系统数据保存到HTML元素中
+     * 将整个文件系统对象序列化为JSON字符串并存储在页面元素中
+     */
     function saveDataToHtml() {
       try {
+        // 获取存储数据的DOM元素
         const storageElement = document.getElementById('dataStorage');
-        // 使用textContent而非value，确保数据被正确存储
+        // 将文件系统对象序列化为JSON并保存
         storageElement.textContent = JSON.stringify(fileSystem);
       } catch (e) {
         console.error('保存数据失败:', e);
@@ -553,34 +572,38 @@
       }
     }
     
-    // 导出HTML文件
+    /**
+     * 导出当前文件系统为完整的HTML文件
+     * 将整个页面包括数据导出为可下载的HTML文件，实现数据备份和迁移
+     */
     function exportHtmlFile() {
-      // 1. 确保最新数据已保存
+      // 先保存当前数据到HTML元素
       saveDataToHtml();
-      
-      // 2. 创建完整的HTML内容字符串
+      // 创建HTML文档内容
       let htmlContent = '<!DOCTYPE html>\n';
       htmlContent += document.documentElement.outerHTML;
-      
-      // 3. 确保数据存储区包含最新数据
+      // 获取数据存储元素
       const dataStorage = document.getElementById('dataStorage');
+      // 定义正则表达式用于匹配数据存储元素
       const dataRegex = /<div id="dataStorage"[^>]*>[\s\S]*?<\/div>/i;
+      // 创建新的数据存储元素HTML
       const newDataStorage = `<div id="dataStorage" style="display: none;">${dataStorage.textContent}</div>`;
+      // 替换原有数据存储元素
       htmlContent = htmlContent.replace(dataRegex, newDataStorage);
       
-      // 4. 创建Blob并触发下载
+      // 创建Blob对象，用于生成文件
       const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+      // 创建临时URL
       const url = URL.createObjectURL(blob);
-      
+      // 创建临时下载链接
       const a = document.createElement('a');
       a.href = url;
+      // 设置文件名，包含当前日期
       a.download = '文件链接管理系统_' + new Date().toLocaleDateString().replace(/\//g, '-') + '.html';
       document.body.appendChild(a);
-      
-      // 5. 强制触发下载
+      // 模拟点击下载
       a.click();
-      
-      // 6. 清理
+      // 清理临时元素和URL
       setTimeout(() => {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
@@ -588,94 +611,103 @@
       }, 100);
     }
     
-    // 导入CSV文件
+    /**
+     * 导入CSV文件并解析为文件系统中的链接
+     * @param {File} file - 用户选择的CSV文件对象
+     */
     function importCsvFile(file) {
-      // 显示进度模态框
+      // 获取进度显示相关元素
       const progressModal = document.getElementById('importProgressModal');
       const progressBar = document.getElementById('importProgressBar');
       const progressText = document.getElementById('importProgressText');
-      
+      // 显示进度模态框
       progressModal.classList.remove('hidden');
       progressModal.classList.add('flex');
+      // 初始化进度条
       progressBar.style.width = '0%';
       progressText.textContent = '正在解析文件...';
       
+      // 创建文件读取器
       const reader = new FileReader();
-      
       reader.onload = function(e) {
         try {
+          // 获取文件内容
           const content = e.target.result;
+          // 解析CSV内容为二维数组
           const lines = parseCsv(content);
           
+          // 验证CSV文件有效性
           if (lines.length === 0) {
             throw new Error('CSV文件为空或格式不正确');
           }
           
+          // 初始化计数器
           let successCount = 0;
           let updateCount = 0;
           const total = lines.length;
           
-          // 处理每一行数据
+          // 遍历CSV行，每行创建一个文件链接
           lines.forEach((line, index) => {
-            // 跳过空行
+            // 跳过无效行
             if (!line[0] || !line[1]) return;
             
+            // 获取文件名和URL
             const fileName = line[0].trim();
             let fileUrl = line[1].trim();
             
-            // 确保URL格式正确
+            // 确保URL包含协议
             if (!fileUrl.startsWith('http://') && !fileUrl.startsWith('https://')) {
               fileUrl = 'https://' + fileUrl;
             }
             
-            // 检查是否已存在同名文件
+            // 检查当前文件夹中是否已存在同名文件
             const existingFileIndex = currentFolder.children.findIndex(
               item => item.type === 'file' && item.name === fileName
             );
             
+            // 如果文件已存在，则更新URL
             if (existingFileIndex !== -1) {
-              // 存在同名文件，更新链接
               currentFolder.children[existingFileIndex].url = fileUrl;
               updateCount++;
             } else {
-              // 不存在同名文件，创建新文件
+              // 创建新文件对象
               const newFile = {
                 id: generateId(),
                 name: fileName,
                 type: 'file',
                 url: fileUrl
               };
+              // 添加到当前文件夹
               currentFolder.children.push(newFile);
               successCount++;
             }
-            
-            // 更新进度
+            // 更新进度条
             const progress = Math.round(((index + 1) / total) * 100);
             progressBar.style.width = `${progress}%`;
             progressText.textContent = `正在处理: ${index + 1}/${total}`;
           });
           
-          // 保存数据
+          // 保存更新后的数据
           saveDataToHtml();
-          
-          // 显示结果
+          // 延迟关闭进度模态框并显示结果
           setTimeout(() => {
+            // 隐藏进度模态框
             progressModal.classList.add('hidden');
             progressModal.classList.remove('flex');
-            
+            // 显示导入结果模态框
             const resultModal = document.getElementById('importResultModal');
             const resultText = document.getElementById('importResultText');
-            
             resultText.textContent = `成功导入 ${successCount} 个新文件，更新 ${updateCount} 个现有文件`;
             resultModal.classList.remove('hidden');
             resultModal.classList.add('flex');
-            
-            // 刷新内容
+            // 重新渲染内容
             renderContent();
           }, 500);
           
         } catch (error) {
+          // 处理导入错误
           console.error('导入失败:', error);
+          // 隐藏进度模态框
           progressModal.classList.add('hidden');
           progressModal.classList.remove('flex');
           alert(`导入失败: ${error.message}`);
@@ -687,58 +719,74 @@
         progressModal.classList.remove('flex');
         alert('读取文件时发生错误');
       };
-      
       reader.readAsText(file);
     }
     
-    // 解析CSV内容
+    /**
+     * 解析CSV文本内容为二维数组
+     * 支持引号包裹的字段、转义字符和多行内容
+     * @param {string} content - CSV文件内容
+     * @returns {Array<Array<string>>} - 解析后的二维数组
+     */
     function parseCsv(content) {
-      // 简单的CSV解析器，支持引号和换行
+      // 存储所有解析后的行
       const lines = [];
+      // 当前正在处理的行
       let currentLine = [];
+      // 当前正在处理的字段
       let currentField = '';
+      // 是否在引号内
       let inQuotes = false;
+      // 是否遇到转义字符
       let escaped = false;
       
+      // 逐字符解析CSV内容
       for (let i = 0; i < content.length; i++) {
         const char = content[i];
         
+        // 处理转义字符
         if (escaped) {
           currentField += char;
           escaped = false;
           continue;
         }
         
+        // 处理引号
         if (char === '"') {
           inQuotes = !inQuotes;
         } else if (char === ',' && !inQuotes) {
+          // 处理字段分隔符
           currentLine.push(currentField);
           currentField = '';
         } else if (char === '\\') {
+          // 处理转义符
           escaped = true;
         } else if ((char === '\n' || char === '\r') && !inQuotes) {
+          // 处理行结束
           if (currentField || currentLine.length > 0) {
             currentLine.push(currentField);
+            // 清空当前字段
             currentField = '';
+            // 添加当前行到结果中
             lines.push(currentLine);
+            // 重置当前行
             currentLine = [];
           }
-          // 处理可能的\r\n组合
+          // 处理Windows风格的换行符(\r\n)
           if (char === '\r' && i + 1 < content.length && content[i + 1] === '\n') {
             i++;
           }
         } else {
+          // 添加普通字符到当前字段
           currentField += char;
         }
       }
-       
-       // 添加最后一行
+      // 处理最后一行
       if (currentField || currentLine.length > 0) {
         currentLine.push(currentField);
         lines.push(currentLine);
       }
-      
-      // 跳过标题行（如果第一行看起来像标题）
+      // 如果第一行是标题行，则移除
       if (lines.length > 0 && 
           (lines[0][0].toLowerCase().includes('文件名') || 
            lines[0][0].toLowerCase().includes('名称') ||
@@ -750,11 +798,17 @@
       return lines;
     }
     
-    // 全局主题过渡设置
+    /**
+     * 主题切换过渡效果配置
+     * 定义主题切换时的动画持续时间、缓动函数和需要应用过渡效果的CSS属性
+     */
     const themeTransitionConfig = {
-      duration: '400ms',                // 统一过渡时长
-      easing: 'cubic-bezier(0.4, 0, 0.2, 1)',  // 统一过渡曲线
-      properties: [                    // 需要过渡的CSS属性
+      // 过渡动画持续时间
+      duration: '400ms',
+      // 缓动函数，使过渡更加平滑
+      easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      // 需要应用过渡效果的CSS属性列表
+      properties: [
         'color',
         'background-color',
         'border-color',
@@ -766,12 +820,13 @@
       ]
     };
     
+
     /**
-     * 应用全局主题过渡样式
-     * 为所有元素添加统一的过渡效果
+     * 应用主题切换过渡效果样式
+     * 创建或更新样式元素，为主题切换添加平滑过渡效果
      */
     function applyThemeTransitionStyles() {
-      // 创建或获取样式元素
+      // 查找或创建样式元素
       let styleEl = document.getElementById('theme-transition-styles');
       if (!styleEl) {
         styleEl = document.createElement('style');
@@ -779,12 +834,11 @@
         document.head.appendChild(styleEl);
       }
       
-      // 构建过渡属性字符串
+      // 生成CSS过渡属性值
       const transitionValue = themeTransitionConfig.properties
         .map(prop => `${prop} ${themeTransitionConfig.duration} ${themeTransitionConfig.easing}`)
         .join(', ');
-      
-      // 设置全局过渡样式
+      // 设置CSS内容，为所有元素添加过渡效果
       styleEl.textContent = `
         html.theme-transitioning,
         html.theme-transitioning *,
@@ -797,36 +851,34 @@
     }
     
     /**
-     * 检查并应用深色模式
-     * 根据用户偏好设置应用深色或浅色主题
+     * 检查并应用深色模式设置
+     * 根据本地存储的主题偏好或系统设置决定是否启用深色模式
      */
     function checkDarkMode() {
-      // 优先级：localStorage > fileSystem > 系统偏好
+      // 获取保存的主题偏好
       const savedTheme = localStorage.getItem('theme-preference');
       let isDarkMode;
-      
+      // 确定深色模式状态的优先级：1.本地存储 2.文件系统设置 3.系统偏好
       if (savedTheme) {
-        // 使用保存的用户偏好
+        // 首先检查本地存储的主题偏好
         isDarkMode = savedTheme === 'dark';
       } else if (fileSystem.hasOwnProperty('darkMode')) {
-        // 使用文件系统中的设置
+        // 其次检查文件系统中保存的设置
         isDarkMode = fileSystem.darkMode;
       } else {
-        // 使用系统偏好
+        // 最后检查系统偏好设置
         isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
       }
       
-      // 应用主题
+      // 应用深色模式设置到HTML元素
       if (isDarkMode) {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
-      
-      // 同步到fileSystem
+      // 更新文件系统中的深色模式设置
       fileSystem.darkMode = isDarkMode;
-      
-      // 确保过渡样式已应用
+      // 应用主题过渡效果
       applyThemeTransitionStyles();
     }
     
@@ -841,43 +893,47 @@
     
     /**
      * 切换深色/浅色模式
-     * 使用统一的过渡效果平滑切换主题
+     * 切换当前主题，保存偏好设置，并应用平滑过渡效果
      */
     function toggleDarkMode() {
-      // 添加切换动画效果
+      // 获取主题切换按钮
       const themeToggleBtn = document.getElementById('themeToggle');
+      // 添加按钮按下效果
       themeToggleBtn.style.transform = 'scale(0.9)';
-      
-      // 确保过渡样式已应用
+      // 应用主题过渡效果
       applyThemeTransitionStyles();
-      
-      // 添加过渡类，激活所有元素的过渡效果
+      // 添加过渡类
       document.documentElement.classList.add('theme-transitioning');
-      
-      // 短暂延迟后执行主题切换
       setTimeout(() => {
+        // 切换深色模式类并获取当前状态
         const isDark = document.documentElement.classList.toggle('dark');
+        // 更新文件系统中的深色模式设置
         fileSystem.darkMode = isDark;
         
-        // 保存用户偏好到localStorage
+        // 保存主题偏好到本地存储
         localStorage.setItem('theme-preference', isDark ? 'dark' : 'light');
         
-        // 恢复按钮状态
+        // 恢复按钮样式
         themeToggleBtn.style.transform = '';
         
-        // 保存数据
+        // 保存设置到HTML
         saveDataToHtml();
         
-        // 在过渡完成后移除过渡类
+        // 过渡完成后移除过渡类
         setTimeout(() => {
           document.documentElement.classList.remove('theme-transitioning');
         }, parseInt(themeTransitionConfig.duration));
       }, 50);
     }
-          
-    // 全局通知函数
+    
+    /**
+     * 显示通知消息
+     * 在页面右上角显示一个临时通知，支持不同类型的样式
+     * @param {string} message - 通知消息内容
+     * @param {string} type - 通知类型，可选值：success、error、warning、info
+     */
     function showNotification(message, type = 'info') {
-      // 创建通知容器（如果不存在）
+      // 获取或创建通知容器
       let notificationContainer = document.getElementById('notification-container');
       if (!notificationContainer) {
         notificationContainer = document.createElement('div');
@@ -885,31 +941,36 @@
         notificationContainer.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 10000; pointer-events: none;';
         document.body.appendChild(notificationContainer);
       }
+      
+      // 创建通知元素
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.textContent = message;
+      notification.style.cssText = 'padding: 12px 24px; margin-bottom: 8px; border-radius: 4px; color: white; font-size: 14px; opacity: 0; transform: translateX(100%); transition: all 0.3s ease; pointer-events: auto;';
+      
+      // 根据通知类型设置颜色
+      const colors = {
+        success: '#10b981',
+        error: '#ef4444',
+        warning: '#f59e0b',
+        info: '#3b82f6'
+      };
+      notification.style.backgroundColor = colors[type] || colors.info;
           
-          const notification = document.createElement('div');
-          notification.className = 'notification';
-          notification.textContent = message;
-          notification.style.cssText = 'padding: 12px 24px; margin-bottom: 8px; border-radius: 4px; color: white; font-size: 14px; opacity: 0; transform: translateX(100%); transition: all 0.3s ease; pointer-events: auto;';
-          
-          // 设置通知样式
-          const colors = {
-            success: '#10b981',
-            error: '#ef4444',
-            warning: '#f59e0b',
-            info: '#3b82f6'
-          };
-          notification.style.backgroundColor = colors[type] || colors.info;
-          
+          // 添加通知到容器
           notificationContainer.appendChild(notification);
           
+          // 显示通知（添加短延迟以确保CSS过渡效果生效）
           setTimeout(() => {
             notification.style.opacity = '1';
             notification.style.transform = 'translateX(0)';
           }, 100);
           
+          // 3秒后自动隐藏通知
           setTimeout(() => {
             notification.style.opacity = '0';
             notification.style.transform = 'translateX(100%)';
+            // 过渡完成后移除通知元素
             setTimeout(() => {
               if (notification.parentNode) {
                 notification.parentNode.removeChild(notification);
@@ -918,31 +979,40 @@
           }, 3000);
     }
     
-    // 渲染当前目录内容
+    /**
+     * 渲染当前文件夹内容
+     * 显示当前文件夹中的所有文件和子文件夹
+     */
     function renderContent() {
+      // 获取内容容器和空状态提示元素
       const container = document.getElementById('contentContainer');
       const emptyState = document.getElementById('emptyState');
-      
+      // 清空容器
       container.innerHTML = '';
-      
+      // 如果当前文件夹为空，显示空状态提示
       if (currentFolder.children.length === 0) {
         emptyState.classList.remove('hidden');
         return;
       }
-      
+      // 隐藏空状态提示
       emptyState.classList.add('hidden');
-      
-      // 先渲染文件夹，再渲染文件
+      // 分离文件夹和文件
       const folders = currentFolder.children.filter(item => item.type === 'folder');
       const files = currentFolder.children.filter(item => item.type === 'file');
       
+      // 合并文件夹和文件列表，先显示文件夹再显示文件
       [...folders, ...files].forEach(item => {
+        // 创建项目元素
         const itemElement = document.createElement('div');
+        // 设置数据属性，用于识别和操作
         itemElement.setAttribute('data-id', item.id);
         itemElement.setAttribute('data-type', item.type);
         
+        // 根据项目类型创建不同的UI
         if (item.type === 'folder') {
+          // 文件夹样式
           itemElement.className = 'bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700 folder-hover cursor-pointer flex flex-col h-full group';
+          // 设置文件夹HTML内容
           itemElement.innerHTML = `
             <div class="flex justify-between items-start mb-2">
               <div class="flex items-center space-x-2">
@@ -961,22 +1031,28 @@
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-auto">${item.children.length} 个项目</p>
           `;
           
-          // 点击文件夹进入
+          // 添加文件夹点击事件，点击时导航到该文件夹
           itemElement.addEventListener('click', (e) => {
+            // 确保不是点击操作按钮且不在拖拽过程中
             if (!e.target.closest('.item-actions') && !draggedItem) {
               navigateToFolder(item.id);
             }
           });
-          
-          // 文件夹拖拽相关事件 - 作为放置目标
+          // 添加拖拽相关事件处理
+          // 当元素被拖拽到该文件夹上方时触发
           itemElement.addEventListener('dragover', handleDragOver);
+          // 当拖拽离开该文件夹时触发
           itemElement.addEventListener('dragleave', handleDragLeave);
+          // 当拖拽元素在该文件夹上释放时触发，处理文件移动逻辑
           itemElement.addEventListener('drop', handleDrop);
           
         } else {
-          // 文件/链接
+          // 文件样式 - 设置文件卡片的基本样式，包括背景色、圆角、阴影和边框
+          // group类用于控制子元素的hover状态
           itemElement.className = 'bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700 file-hover flex flex-col h-full group';
-          itemElement.setAttribute('draggable', 'true'); // 使文件可拖拽
+          // 设置文件为可拖拽，允许用户拖动文件到其他文件夹
+          itemElement.setAttribute('draggable', 'true');
+          // 设置文件卡片的HTML内容，包括文件图标、名称、操作按钮和URL
           itemElement.innerHTML = `
             <div class="flex justify-between items-start mb-2">
               <div class="flex items-center space-x-2">
@@ -995,323 +1071,481 @@
             <p class="text-sm text-gray-500 dark:text-gray-400 truncate mt-auto">${item.url}</p>
           `;
           
-          // 点击链接打开
+          // 添加点击事件 - 当点击文件卡片时打开URL，但不包括点击操作按钮的情况
           itemElement.addEventListener('click', (e) => {
             if (!e.target.closest('.item-actions')) {
               window.open(item.url, '_blank');
             }
           });
           
-          // 文件拖拽相关事件
+          // 添加拖拽开始事件 - 当用户开始拖动文件时触发
           itemElement.addEventListener('dragstart', handleDragStart);
+          // 添加拖拽结束事件 - 当用户结束拖动文件时触发
           itemElement.addEventListener('dragend', handleDragEnd);
         }
         
+        // 将创建好的元素添加到容器中
         container.appendChild(itemElement);
       });
       
-      // 为编辑和删除按钮添加事件监听
+      // 为所有编辑按钮添加点击事件
       document.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
+          // 阻止事件冒泡，防止触发父元素的点击事件（如打开URL）
           e.stopPropagation();
+          // 获取要编辑的项目ID和类型（文件夹或文件）
           const id = btn.getAttribute('data-id');
           const type = btn.getAttribute('data-type');
+          // 打开编辑模态框
           openEditModal(id, type);
         });
       });
       
+      // 为所有删除按钮添加点击事件
       document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
+          // 阻止事件冒泡，防止触发父元素的点击事件
           e.stopPropagation();
+          // 获取要删除的项目ID和类型（文件夹或文件）
           const id = btn.getAttribute('data-id');
           const type = btn.getAttribute('data-type');
+          // 打开删除确认模态框
           openDeleteModal(id, type);
         });
       });
-      
-      // 更新路径导航
+      // 更新路径导航栏，显示当前位置的文件夹路径
       updatePathNavigation();
     }
     
-    // 拖拽开始事件处理
+    /**
+     * 处理拖拽开始事件
+     * 当用户开始拖动文件时触发，记录被拖动项目的信息
+     * @param {DragEvent} e - 拖拽事件对象
+     */
     function handleDragStart(e) {
+      // 获取被拖动项目的ID和类型
       const itemId = this.getAttribute('data-id');
       const itemType = this.getAttribute('data-type');
-      
-      // 只有文件可以被拖拽
+      // 只允许拖动文件类型的项目
       if (itemType === 'file') {
+        // 记录被拖动项目的信息，包括ID、类型和源文件夹ID
         draggedItem = {
           id: itemId,
           type: itemType,
           sourceFolderId: currentFolder.id
         };
-        
-        // 添加拖拽样式
+        // 使用setTimeout确保在下一个事件循环中添加样式，避免与其他事件冲突
         setTimeout(() => {
           this.classList.add('dragging');
         }, 0);
-        
-        // 设置拖拽数据
+        // 设置拖拽数据，用于在拖放时识别被拖动的项目
         e.dataTransfer.setData('text/plain', itemId);
       }
     }
     
-    // 拖拽结束事件处理
+    /**
+     * 处理拖拽结束事件
+     * 当用户结束拖动操作时触发，清理拖拽状态
+     */
     function handleDragEnd() {
-      // 移除拖拽样式
+      // 移除拖动中的样式
       this.classList.remove('dragging');
-      
-      // 清除所有拖拽悬停样式
+      // 移除所有目标元素的拖拽悬停样式
       document.querySelectorAll('.drag-over').forEach(el => {
         el.classList.remove('drag-over');
       });
-      
+      // 清空被拖动项目的信息
       draggedItem = null;
     }
     
-    // 拖拽悬停事件处理
+    /**
+     * 处理拖拽悬停事件
+     * 当拖拽元素悬停在目标元素上时触发
+     * @param {DragEvent} e - 拖拽事件对象
+     */
     function handleDragOver(e) {
-      e.preventDefault(); // 允许放置
-      
-      // 只有当有文件被拖拽且目标是文件夹时才应用样式
+      // 阻止默认行为，允许放置
+      e.preventDefault();
+      // 检查是否有被拖动的项目，且是文件类型，且目标是文件夹
       if (draggedItem && draggedItem.type === 'file' && this.getAttribute('data-type') === 'folder') {
+        // 添加拖拽悬停样式，提供视觉反馈
         this.classList.add('drag-over');
       }
     }
     
-    // 拖拽离开事件处理
+    /**
+     * 处理拖拽离开事件
+     * 当拖拽元素离开目标元素时触发
+     */
     function handleDragLeave() {
+      // 移除拖拽悬停样式
       this.classList.remove('drag-over');
     }
     
-    // 放置事件处理
+    /**
+     * 处理拖拽放置事件
+     * 当拖拽元素在目标元素上释放时触发，执行文件移动操作
+     * @param {DragEvent} e - 拖拽事件对象
+     */
     function handleDrop(e) {
+      // 阻止默认行为
       e.preventDefault();
+      // 移除拖拽悬停样式
       this.classList.remove('drag-over');
-      
-      // 确保有被拖拽的项目且目标是文件夹
+      // 检查是否有被拖动的项目，且是文件类型，且目标是文件夹
       if (draggedItem && draggedItem.type === 'file' && this.getAttribute('data-type') === 'folder') {
+        // 获取目标文件夹ID
         const targetFolderId = this.getAttribute('data-id');
-        
-        // 不允许拖放到自身所在的文件夹
+        // 确保源文件夹和目标文件夹不同，避免不必要的移动
         if (draggedItem.sourceFolderId !== targetFolderId) {
+          // 执行移动操作
           moveItem(draggedItem.id, draggedItem.sourceFolderId, targetFolderId);
         }
       }
     }
     
-    // 移动项目到目标文件夹
+    /**
+     * 移动项目到新文件夹
+     * 将文件从源文件夹移动到目标文件夹
+     * @param {string} itemId - 要移动的项目ID
+     * @param {string} sourceFolderId - 源文件夹ID
+     * @param {string} targetFolderId - 目标文件夹ID
+     */
     function moveItem(itemId, sourceFolderId, targetFolderId) {
-      // 查找源文件夹和项目
+      // 在文件系统中查找源文件夹
+      // 在文件系统中查找源文件夹
       const sourceResult = findFolderById(fileSystem, sourceFolderId);
+      // 如果找不到源文件夹，则退出
       if (!sourceResult) return;
       
+      // 获取源文件夹对象
       const sourceFolder = sourceResult.item;
+      // 在源文件夹的子项中查找要移动的项目
       const itemIndex = sourceFolder.children.findIndex(item => item.id === itemId);
+      // 如果找不到要移动的项目，则退出
       if (itemIndex === -1) return;
       
-      // 从源文件夹中移除项目
+      // 从源文件夹中移除项目并获取该项目
       const [movedItem] = sourceFolder.children.splice(itemIndex, 1);
       
-      // 查找目标文件夹并添加项目
+      // 在文件系统中查找目标文件夹
       const targetResult = findFolderById(fileSystem, targetFolderId);
       if (targetResult) {
+        // 将移动的项目添加到目标文件夹的子项中
         targetResult.item.children.push(movedItem);
         
-        // 保存并刷新界面
+        // 保存更新后的数据
         saveDataToHtml();
+        // 重新渲染内容
         renderContent();
       }
     }
     
-    // 更新路径导航
+    /**
+     * 更新路径导航栏
+     * 显示当前位置的文件夹路径，允许用户通过点击导航回到上级文件夹
+     */
     function updatePathNavigation() {
+      // 获取路径导航容器元素
       const pathContainer = document.getElementById('pathNavigation');
+      // 清空当前导航内容
       pathContainer.innerHTML = '';
       
-      // 递归查找路径上的所有文件夹
+      /**
+       * 构建路径节点数组
+       * 递归查找从当前文件夹到根文件夹的路径
+       * @param {string} currentId - 当前文件夹ID
+       * @param {Array} path - 已收集的路径节点
+       * @returns {Array} 完整的路径节点数组
+       */
       function buildPathNodes(currentId, path = []) {
+        // 如果到达根文件夹，返回完整路径
         if (currentId === 'root') {
           return [{id: 'root', name: '首页'}, ...path.reverse()];
         }
         
+        // 查找当前文件夹
         const parentFolder = findFolderById(fileSystem, currentId);
         if (parentFolder) {
+          // 将当前文件夹添加到路径中
           path.push({id: parentFolder.item.id, name: parentFolder.item.name});
+          // 递归查找父文件夹，构建完整路径
           return buildPathNodes(parentFolder.parent.id, path);
         }
         
+        // 如果找不到当前文件夹，则返回默认路径（只有根文件夹）
         return [{id: 'root', name: '首页'}];
       }
       
+      // 构建从根文件夹到当前文件夹的路径节点数组
       const pathNodes = buildPathNodes(currentFolder.id);
       
+      // 遍历路径节点，创建导航元素
       pathNodes.forEach((node, index) => {
+        // 创建路径节点元素
         const nodeElement = document.createElement('span');
+        // 设置样式，使其可点击并有悬停效果
         nodeElement.className = 'cursor-pointer hover:text-primary';
+        // 设置节点文本为文件夹名称
         nodeElement.textContent = node.name;
+        // 设置节点的data-id属性，用于点击导航时识别目标文件夹
         nodeElement.setAttribute('data-id', node.id);
         
+        // 如果不是最后一个节点，添加分隔符
         if (index < pathNodes.length - 1) {
+          // 创建分隔符元素
           const separator = document.createElement('span');
+          // 设置分隔符样式
           separator.className = 'mx-2 text-gray-400';
+          // 设置分隔符文本
           separator.textContent = '/';
+          // 将节点和分隔符添加到路径容器
           pathContainer.appendChild(nodeElement);
           pathContainer.appendChild(separator);
         } else {
+          // 如果是最后一个节点（当前文件夹），添加高亮样式
           nodeElement.classList.add('text-primary', 'font-medium');
+          // 将节点添加到路径容器
           pathContainer.appendChild(nodeElement);
         }
         
-        // 点击导航到对应文件夹
+        // 为每个路径节点添加点击事件，点击时导航到对应文件夹
         nodeElement.addEventListener('click', () => {
           navigateToFolder(node.id);
         });
       });
     }
     
-    // 导航到指定文件夹
+    /**
+     * 导航到指定文件夹
+     * 更新当前文件夹并重新渲染内容
+     * @param {string} folderId - 目标文件夹ID
+     */
     function navigateToFolder(folderId) {
+      // 在文件系统中查找目标文件夹
       const result = findFolderById(fileSystem, folderId);
+      // 如果找到目标文件夹且类型为文件夹
       if (result && result.item.type === 'folder') {
+        // 更新当前文件夹
         currentFolder = result.item;
+        // 重新渲染内容
         renderContent();
       }
     }
     
-    // 查找指定ID的文件夹
+    /**
+     * 根据ID查找文件夹
+     * 递归搜索文件系统树，查找指定ID的文件夹
+     * @param {Object} root - 搜索的起始节点
+     * @param {string} targetId - 要查找的文件夹ID
+     * @returns {Object|null} 找到的文件夹及其父文件夹，未找到则返回null
+     */
     function findFolderById(root, targetId) {
+      // 如果当前节点就是目标节点，直接返回
       if (root.id === targetId) {
         return {item: root, parent: null};
       }
       
+      // 遍历当前节点的所有子节点
       for (const child of root.children) {
+        // 如果子节点是目标文件夹，返回子节点和当前节点（作为父节点）
         if (child.id === targetId && child.type === 'folder') {
           return {item: child, parent: root};
         }
         
+        // 如果子节点是文件夹，递归搜索
         if (child.type === 'folder') {
           const result = findFolderById(child, targetId);
+          // 如果在子文件夹中找到目标，返回结果
           if (result) {
             return result;
           }
         }
       }
       
+      // 如果遍历完所有子节点仍未找到目标，返回null
       return null;
     }
     
-    // 生成唯一ID
+    /**
+     * 生成唯一ID
+     * 使用时间戳和随机数组合生成唯一标识符
+     * @returns {string} 生成的唯一ID
+     */
     function generateId() {
+      // 使用当前时间戳（转为36进制）和随机数（截取一部分）组合生成唯一ID
       return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
     }
     
-    // 添加新文件夹
+    /**
+     * 添加新文件夹
+     * 在当前文件夹下创建新的子文件夹
+     * @param {string} name - 新文件夹名称
+     */
     function addFolder(name) {
+      // 创建新文件夹对象
       const newFolder = {
-        id: generateId(),
-        name: name,
-        type: 'folder',
-        children: []
+        id: generateId(), // 生成唯一ID
+        name: name,      // 文件夹名称
+        type: 'folder',  // 类型为文件夹
+        children: []     // 初始化空的子项数组
       };
       
+      // 将新文件夹添加到当前文件夹的子项中
       currentFolder.children.push(newFolder);
+      // 保存更新后的数据
       saveDataToHtml();
+      // 重新渲染内容
       renderContent();
     }
     
-    // 添加新文件/链接
+    /**
+     * 添加新文件
+     * 在当前文件夹下创建新的文件（链接）
+     * @param {string} name - 文件名称
+     * @param {string} url - 文件URL
+     */
     function addFile(name, url) {
-      // 确保URL格式正确
+      // 格式化URL，确保以http://或https://开头
       let formattedUrl = url;
       if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
         formattedUrl = 'https://' + formattedUrl;
       }
       
+      // 创建新文件对象
       const newFile = {
-        id: generateId(),
-        name: name,
-        type: 'file',
-        url: formattedUrl
+        id: generateId(),     // 生成唯一ID
+        name: name,          // 文件名称
+        type: 'file',        // 类型为文件
+        url: formattedUrl    // 格式化后的URL
       };
       
+      // 将新文件添加到当前文件夹的子项中
       currentFolder.children.push(newFile);
+      // 保存更新后的数据
       saveDataToHtml();
+      // 重新渲染内容
       renderContent();
     }
     
-    // 编辑项目
+    /**
+     * 编辑项目（文件夹或文件）
+     * 修改指定项目的名称和URL（如果是文件）
+     * @param {string} id - 项目ID
+     * @param {string} type - 项目类型（'folder'或'file'）
+     * @param {string} newName - 新名称
+     * @param {string|null} newUrl - 新URL（仅适用于文件类型）
+     */
     function editItem(id, type, newName, newUrl = null) {
-      // 查找项目
+      /**
+       * 递归查找指定ID的项目
+       * @param {Object} parent - 父文件夹
+       * @param {string} targetId - 目标项目ID
+       * @returns {Object|null} 找到的项目及其父文件夹，未找到则返回null
+       */
       function findItem(parent, targetId) {
+        // 遍历父文件夹的所有子项
         for (const item of parent.children) {
+          // 如果找到目标项目，返回项目和父文件夹
           if (item.id === targetId) {
             return {item, parent};
           }
           
+          // 如果当前项目是文件夹，递归搜索
           if (item.type === 'folder') {
             const result = findItem(item, targetId);
+            // 如果在子文件夹中找到目标，返回结果
             if (result) {
               return result;
             }
           }
         }
+        // 如果遍历完所有子项仍未找到目标，返回null
         return null;
       }
       
+      // 在文件系统中查找目标项目
       const result = findItem(fileSystem, id);
       if (result) {
+        // 更新项目名称
         result.item.name = newName;
+        // 如果是文件类型且提供了新URL，更新URL
         if (type === 'file' && newUrl) {
-          // 确保URL格式正确
+          // 格式化URL，确保以http://或https://开头
           let formattedUrl = newUrl;
           if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
             formattedUrl = 'https://' + formattedUrl;
           }
+          // 更新文件URL
           result.item.url = formattedUrl;
         }
         
+        // 保存更新后的数据
         saveDataToHtml();
+        // 重新渲染内容
         renderContent();
+        // 返回编辑成功
         return true;
       }
       
+      // 未找到目标项目，返回编辑失败
       return false;
     }
     
-    // 删除项目
+    /**
+     * 删除指定ID的项目
+     * @param {string} id - 要删除的项目ID
+     * @param {string} type - 项目类型（'folder'或'file'）
+     * @returns {boolean} 删除是否成功
+     */
     function deleteItemById(id, type) {
-      // 查找并删除项目
+      /**
+       * 递归查找并删除指定ID的项目
+       * @param {Object} parent - 父文件夹
+       * @param {string} targetId - 目标项目ID
+       * @returns {boolean} 删除是否成功
+       */
       function removeItem(parent, targetId) {
+        // 遍历父文件夹的所有子项
         for (let i = 0; i < parent.children.length; i++) {
+          // 如果找到目标项目，从父文件夹中删除
           if (parent.children[i].id === targetId) {
+            // 使用splice方法从数组中删除项目
             parent.children.splice(i, 1);
+            // 返回删除成功
             return true;
           }
           
+          // 如果当前项目是文件夹，递归搜索并尝试删除
           if (parent.children[i].type === 'folder' && removeItem(parent.children[i], targetId)) {
+            // 如果在子文件夹中找到并删除了目标，返回删除成功
             return true;
           }
         }
+        // 遍历完所有子项仍未找到目标，返回删除失败
         return false;
       }
       
+      // 从文件系统根节点开始查找并删除目标项目
       const deleted = removeItem(fileSystem, id);
       if (deleted) {
-        // 如果删除的是当前文件夹，回到根目录
+        // 如果删除的是当前文件夹，导航回根文件夹
         if (id === currentFolder.id) {
           currentFolder = fileSystem;
         }
         
+        // 保存更新后的数据
         saveDataToHtml();
+        // 重新渲染内容
         renderContent();
+        // 返回删除成功
         return true;
       }
       
+      // 未找到目标项目，返回删除失败
       return false;
     }
     
-    // 打开新建文件夹模态框
     function openFolderModal() {
       document.getElementById('folderName').value = '';
       const modal = document.getElementById('folderModal');
@@ -1320,7 +1554,6 @@
       document.getElementById('folderName').focus();
     }
     
-    // 打开添加文件模态框
     function openFileModal() {
       document.getElementById('fileName').value = '';
       document.getElementById('fileUrl').value = '';
@@ -1330,9 +1563,7 @@
       document.getElementById('fileName').focus();
     }
     
-    // 打开编辑模态框
     function openEditModal(id, type) {
-      // 查找项目
       let item = null;
       
       function findItem(parent, targetId) {
@@ -1371,7 +1602,6 @@
       document.getElementById('editName').focus();
     }
     
-    // 打开删除模态框
     function openDeleteModal(id, type) {
       deleteItem = {id, type};
       document.getElementById('deleteMessage').textContent = 
@@ -1381,7 +1611,6 @@
       modal.classList.add('flex');
     }
     
-    // 打开指定模态框
     function openModal(modalId) {
       const modal = document.getElementById(modalId);
       if (modal) {
@@ -1390,7 +1619,6 @@
       }
     }
     
-    // 关闭所有模态框
     function closeAllModals() {
       document.querySelectorAll('.modal').forEach(modal => {
         modal.classList.add('hidden');
@@ -1398,44 +1626,33 @@
       });
     }
     
-    // 设置事件监听器
     function setupEventListeners() {
-      // 导入按钮
       document.getElementById('importBtn').addEventListener('click', () => {
         document.getElementById('fileInput').click();
       });
       
-      // 文件选择
       document.getElementById('fileInput').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
-          // 检查文件类型
           if (file.name.endsWith('.csv') || file.type === 'text/csv') {
             importCsvFile(file);
           } else {
             alert('请选择CSV格式的文件');
           }
-          // 重置文件输入，允许重复选择同一个文件
           e.target.value = '';
         }
       });
       
-      // 新建文件夹按钮
       document.getElementById('addFolderBtn').addEventListener('click', openFolderModal);
       
-      // 添加文件按钮
       document.getElementById('addFileBtn').addEventListener('click', openFileModal);
       
-      // 刷新按钮
       document.getElementById('refreshBtn').addEventListener('click', renderContent);
       
-      // 导出按钮
       document.getElementById('exportBtn').addEventListener('click', exportHtmlFile);
       
-      // 主题切换按钮
       document.getElementById('themeToggle').addEventListener('click', toggleDarkMode);
       
-      // 文件夹表单提交
       document.getElementById('folderForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const folderName = document.getElementById('folderName').value.trim();
@@ -1445,7 +1662,6 @@
         }
       });
       
-      // 文件表单提交
       document.getElementById('fileForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const fileName = document.getElementById('fileName').value.trim();
@@ -1457,7 +1673,6 @@
         }
       });
       
-      // 编辑表单提交
       document.getElementById('editForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const id = document.getElementById('editItemId').value;
@@ -1475,7 +1690,6 @@
         }
       });
       
-      // 确认删除
       document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
         if (deleteItem) {
           deleteItemById(deleteItem.id, deleteItem.type);
@@ -1484,12 +1698,10 @@
         }
       });
       
-      // 关闭模态框按钮
       document.querySelectorAll('.modal-close').forEach(btn => {
         btn.addEventListener('click', closeAllModals);
       });
       
-      // 点击模态框外部关闭
       document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', (e) => {
           if (e.target === modal) {
@@ -1498,7 +1710,6 @@
         });
       });
       
-      // 搜索功能
       document.getElementById('searchInput').addEventListener('input', (e) => {
         const searchTerm = e.target.value.toLowerCase().trim();
         const items = document.querySelectorAll('#contentContainer > div');
@@ -1513,14 +1724,8 @@
         });
       });
       
-      // GitHub同步功能已移除
     }
     
-    // GitHub同步功能已移除
-    
-    // GitHub 仓库同步功能已移除
-
-    // 初始化应用
     document.addEventListener('DOMContentLoaded', () => {
       init();
     });
