@@ -33,6 +33,11 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "读取到版本号: $VERSION"
 
+      - name: 准备文件
+        run: |
+          cp "./木然の摸鱼管理器.html" "./release-file.html"
+          echo "已将文件复制为release-file.html"
+
       - name: 创建Release
         id: create_release
         uses: softprops/action-gh-release@v2
@@ -40,14 +45,10 @@ jobs:
           tag_name: ${{ steps.get_version.outputs.version }}
           name: 木然の摸鱼管理器 ${{ steps.get_version.outputs.version }}
           body: |
-            # 木然の摸鱼管理器 ${{ steps.get_version.outputs.version }}
-            
-            版本号: ${{ steps.get_version.outputs.version }}
             ${{ github.event.inputs.release_notes }}
             
             ---  
-          files: ./木然の摸鱼管理器.html
-          name_template: "木然の摸鱼管理器.html"
+          files: ./release-file.html
           draft: false
           prerelease: false
         env:
