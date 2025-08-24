@@ -53,23 +53,6 @@ open "木然の摸鱼管理器.html"
 
 ---
 
-## 使用示例
-> 下图为示意，建议在 `docs/screenshots` 下添加实际截图并更新路径
-
-- 首页（浅色主题）
-
-  ![首页（浅色）](docs/screenshots/home-light.png)
-
-- 首页（深色主题）
-
-  ![首页（深色）](docs/screenshots/home-dark.png)
-
-- 新建文件夹 / 添加链接 / 搜索 / 导入导出 / GitHub 同步等功能面板
-
-  ![功能面板示例](docs/screenshots/modals.png)
-
----
-
 ## GitHub 仓库同步
 > 在应用内点击“GitHub 同步”即可打开同步管理面板
 
