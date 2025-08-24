@@ -3,13 +3,9 @@ name: Create Release
 on:
   workflow_dispatch:
     inputs:
-      release_title:
-        description: '发布标题'
-        required: true
-        default: '木然の摸鱼管理器更新'
       release_notes:
         description: '发布说明'
-        required: true
+        required: false
         default: '常规更新'
 
 jobs:
@@ -31,10 +27,11 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.get_version.outputs.version }}
-          name: ${{ github.event.inputs.release_title }} ${{ steps.get_version.outputs.version }}
+          name: 木然の摸鱼管理器 ${{ steps.get_version.outputs.version }}
           body: |
-            # ${{ github.event.inputs.release_title }} ${{ steps.get_version.outputs.version }}
+            # 木然の摸鱼管理器 ${{ steps.get_version.outputs.version }}
             
+            版本号: ${{ steps.get_version.outputs.version }}
             ${{ github.event.inputs.release_notes }}
             
             ---
