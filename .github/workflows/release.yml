@@ -18,7 +18,14 @@ jobs:
       - name: 读取版本号
         id: get_version
         run: |
-          VERSION=$(grep -o 'content="V[0-9]\+\.[0-9]\+"' "木然の摸鱼管理器.html" | grep -o 'V[0-9]\+\.[0-9]\+')
+          echo "查找文件"
+          ls -la
+          echo "读取版本号"
+          VERSION=$(grep -o 'content="V[0-9]\+\.[0-9]\+"' "./木然の摸鱼管理器.html" | grep -o 'V[0-9]\+\.[0-9]\+')
+          if [ -z "$VERSION" ]; then
+            echo "错误：无法从文件中读取版本号"
+            exit 1
+          fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "读取到版本号: $VERSION"
 
@@ -37,7 +44,7 @@ jobs:
             ---
             
             自动发布于 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          files: 木然の摸鱼管理器.html
+          files: ./木然の摸鱼管理器.html
           draft: false
           prerelease: false
         env:
